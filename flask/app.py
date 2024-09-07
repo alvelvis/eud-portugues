@@ -7,7 +7,7 @@ app_path = os.path.dirname(os.path.abspath(__file__))
 config_path = os.path.join(app_path, "config.json")
 sentence_path = "sentence.conllu"
 sentence_out = sentence_path.replace('.conllu', '_GREWED.conllu')
-rules_path = '/home/elvis/WORKSPACE/usp-poetisa/enhanced-grew/ud_to_eud_br/conjunto_regras_porttinari.grs'
+rules_path = 'conjunto_regras_porttinari.grs'
 
 def save_config():
     with open(config_path, "w") as f:
