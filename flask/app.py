@@ -1,12 +1,13 @@
 from flask import Flask, redirect, render_template, request
-import os, sys, subprocess
+import os, subprocess
 import json
 
 app = Flask(__name__)
 app_path = os.path.dirname(os.path.abspath(__file__))
 config_path = os.path.join(app_path, "config.json")
-validate_path = os.path.join(app_path, "..", "tools", "validate.py")
-sentence_path = os.path.join(app_path, "sentence.conllu")
+sentence_path = "sentence.conllu"
+sentence_out = sentence_path.replace('.conllu', '_GREWED.conllu')
+rules_path = '/home/elvis/WORKSPACE/usp-poetisa/enhanced-grew/ud_to_eud_br/conjunto_regras_porttinari.grs'
 
 def save_config():
     with open(config_path, "w") as f:
@@ -29,29 +30,29 @@ else:
         config = json.load(f)
 
 @app.route('/', methods="POST GET".split())
-def home(conllu="", validation="", update="", lang=""):
+def home(conllu="", enhancement=""):
     if request.method == "POST":
-        # convert new-line to linux style and add empty line in the end (validation requirements)
+        # convert new-line to linux style and add empty line in the end
         conllu = request.values.get("inputText").strip().replace("\r\n", "\n") + "\n\n"
-        lang = request.values.get("lang").strip().lower()
         with open(sentence_path, "w") as f:
             f.write(conllu)
-        command = "{} \"{}\" --max-err=0 --lang={} \"{}\"".format(# 2>&1
-                os.path.abspath(sys.executable),
-                validate_path,
-                lang,
-                sentence_path
-            )
+        command = f"grew transform -config iwpt -grs \"{rules_path}\" -strat strat_modificadas -i '{sentence_path}' -o '{sentence_out}'"
         try:
-            validation = subprocess.Popen(command, shell=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE, env=os.environ)
-            validation.wait()
-            validation = validation.stderr.read().decode()
+            enhancement = subprocess.Popen(command, shell=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE, env=os.environ)
+            enhancement.wait()
+            stdout, stderr = enhancement.communicate()
+            if enhancement.returncode != 0:
+                raise subprocess.CalledProcessError(enhancement.returncode, command, stderr)                    
+            with open(sentence_out) as f:
+                enhancement = f.read()
+            os.remove(sentence_path)
+            os.remove(sentence_out)
+        except subprocess.CalledProcessError as e:
+            enhancement = f"Error executing command: {e.stdout.decode('utf-8')}"
         except Exception as e:
-            validation = command + "\n" + str(e)
-        os.remove(sentence_path)
-        increase_access_number(conllu.count("\n\n"))    
-    elif request.method == "GET":
-        update = os.popen("cd \"%s\"; git pull --recurse-submodules 2>&1" % app_path, "r").read()
+            enhancement = f"An unexpected error occurred: {str(e)}"
+        finally:
+            increase_access_number(conllu.count("\n\n"))
     access_number = config.get("access_number")
     sentences_tested = config.get("sentences_tested")
 
@@ -59,13 +60,7 @@ def home(conllu="", validation="", update="", lang=""):
         'index.html', 
         title="",
         conllu=conllu.strip(),
-        validation=validation,
-        update=update,
-        lang=lang,
+        enhancement=enhancement,
         access_number=access_number,
         sentences_tested=sentences_tested
         )
-
-@app.route("/validate", methods="POST GET".split())
-def validate():
-    return redirect("/")
