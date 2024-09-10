@@ -34,8 +34,9 @@
     <body>
         <form class="form-signin" action="/" method="POST">
             <div class="text-center mb-4">
-                <img class="mb-4" src="https://souelvis.dev/ui-verbobrasil/img/logos.png" alt="">
-                <h1 class="h3 mb-3 font-weight-normal">EUD annotation for Portuguese</h1>
+                <a href="https://sites.google.com/icmc.usp.br/poetisa" target="_blank"><img class="mb-4" src="https://souelvis.dev/ui-verbobrasil/img/logos.png" alt=""></a>
+                <h1 class="h3 mb-3 font-weight-normal">Enhanced Universal Dependencies annotation for Portuguese</h1>
+                <p>You can paste a basic <a href='https://universaldependencies.org' target="_blank">Universal Dependencies analysis</a> in the box below and get its <a href='https://universaldependencies.org/u/overview/enhanced-syntax.html' target="_blank">enhanced version</a>, which is produced by a series of <a href='https://aclanthology.org/2023.udfestbr-1.5/' target="_blank">annotation rules for Portuguese</a>.</p>
                 <hr>
                 <a href="https://github.com/alvelvis/eud-portugues">@alvelvis</a> - <a href="https://gitlab.inria.fr/grew">grew</a> - <a href="https://github.com/icepoint666/shopping-more">template</a><br>
             </div>
@@ -52,7 +53,7 @@
             </div>
 
             <button class="btn btn-lg btn-primary btn-block" type="submit">Annotate</button>
-            <p class="mt-5 mb-3 text-muted text-center">{% if access_number %}{{access_number}} tests have been made ({{sentences_tested}} sentences tested)<br>{% endif %}&copy; 2024</p>
+            <p class="mt-5 mb-3 text-muted text-center">{% if access_number %}{{access_number}} annotations have been made ({{sentences_tested}} sentences annotated)<br>{% endif %}&copy; 2024</p>
         </form>
     </body>
     <div id="update" style="display:none">{{update}}</div>

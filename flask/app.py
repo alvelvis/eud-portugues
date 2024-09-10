@@ -45,13 +45,13 @@ def home(conllu="", enhancement=""):
                 raise subprocess.CalledProcessError(enhancement.returncode, command, stderr)                    
             with open(sentence_out) as f:
                 enhancement = f.read()
-            os.remove(sentence_path)
             os.remove(sentence_out)
         except subprocess.CalledProcessError as e:
             enhancement = f"Error executing command: {e.stdout.decode('utf-8')}"
         except Exception as e:
             enhancement = f"An unexpected error occurred: {str(e)}"
         finally:
+            os.remove(sentence_path)
             increase_access_number(conllu.count("\n\n"))
     access_number = config.get("access_number")
     sentences_tested = config.get("sentences_tested")
