@@ -533,9 +533,32 @@ package rel_pron{
     rule move_basic_dep{
       pattern{
         ANT -[E:ref]-> PRO;
-        e: H-[1 <> advmod|det|ref, !enhanced]-> PRO}
+        e: H-[1 <> advmod|det|ref|nsubj, !enhanced]-> PRO;
+        }
       without{ H -> ANT}
       commands{add_edge f:H -> ANT; f.label=e.label; f.enhanced = yes;}
+    }
+
+  % ELVIS: Incluí para lidar com voz passiva (igual regra de cima)
+    rule move_basic_dep_nsubj_pass{
+      pattern{
+        ANT -[E:ref]-> PRO;
+        e: H-[1=nsubj, !enhanced]-> PRO;
+        H [Voice=Pass];
+        }
+      without{ H -> ANT}
+      commands{add_edge f:H -> ANT; f.label="nsubj:pass"; f.enhanced = yes;}
+    }
+
+  % ELVIS: Incluí para lidar com voz ative (igual regra de cima)
+    rule move_basic_dep_nsubj_active{
+      pattern{
+        ANT -[E:ref]-> PRO;
+        e: H-[1=nsubj, !enhanced]-> PRO;
+        H [!Voice]|[Voice<>Pass];
+        }
+      without{ H -> ANT}
+      commands{add_edge f:H -> ANT; f.label="nsubj"; f.enhanced = yes;}
     }
 
   % The basic dependency targeting the relative pronoun, which is a determiner, moves to the antecedent and becomes an NMOD dependency.
@@ -1004,7 +1027,7 @@ package coord_dep_left_pck{
       e:CONJ1 -[1=nsubj]-> D;
       D << CONJ1}
     without{CONJ2 -> D}
-    without{CONJ2 -[1=nsubj]-> *}
+    without{CONJ2 -[1=nsubj|csubj]-> *}
     without{* -[1=ref]-> D}
     without{CONJ2 -[orphan]-> *} % ELVIS: Adicionei, para não propagar dependentes de conj caso esse conj seja head de orphan
     commands{add_edge f:CONJ2 -> D; f.label = "nsubj:pass"; f.enhanced=yes}
@@ -1015,11 +1038,29 @@ package coord_dep_left_pck{
       CONJ2 [!Voice];
       CONJ1 -[1=conj]-> CONJ2;
       CONJ1.Person = CONJ2.Person; % ELVIS: Adicionei para concordância
+      CONJ1.Number = CONJ2.Number; % ELVIS: Adicionei para concordância
       e:CONJ1 -[1=nsubj]-> D;
       D << CONJ1
       }
     without{CONJ2 -> D}
-    without{CONJ2 -[1=nsubj]-> *}
+    without{CONJ2 -[1=nsubj|csubj]-> *}
+    without{* -[1=ref]-> D}
+    without{CONJ2 -[orphan]-> *} % ELVIS: Adicionei, para não propagar dependentes de conj caso esse conj seja head de orphan
+    commands{add_edge f:CONJ2 -> D; f.label = "nsubj"; f.enhanced=yes}
+    }
+
+    % ELVIS: Criei para propagar sujeito quando há concordância entre adjetivos
+    rule coord_dep_left_nsubj_adjetivos{
+    pattern{
+      CONJ2 [upos=ADJ|NOUN];
+      CONJ1 [upos=ADJ|NOUN];
+      CONJ1 -[1=conj]-> CONJ2;
+      CONJ1.Number = CONJ2.Number; % ELVIS: Adicionei para concordância
+      e:CONJ1 -[1=nsubj]-> D;
+      D << CONJ1
+      }
+    without{CONJ2 -> D}
+    without{CONJ2 -[1=nsubj|csubj]-> *}
     without{* -[1=ref]-> D}
     without{CONJ2 -[orphan]-> *} % ELVIS: Adicionei, para não propagar dependentes de conj caso esse conj seja head de orphan
     commands{add_edge f:CONJ2 -> D; f.label = "nsubj"; f.enhanced=yes}
@@ -1031,11 +1072,12 @@ package coord_dep_left_pck{
       CONJ1 -[1=conj]-> CONJ2;
       CONJ1 -[1=aux|cop]-> AUX;
       AUX.Person = CONJ2.Person;
+      AUX.Number = CONJ2.Number; % ELVIS: Adicionei para concordância
       e:CONJ1 -[1=nsubj]-> D;
       D << CONJ1
       }
     without{CONJ2 -> D}
-    without{CONJ2 -[1=nsubj]-> *}
+    without{CONJ2 -[1=nsubj|csubj]-> *}
     without{* -[1=ref]-> D}
     without{CONJ2 -[orphan]-> *}
     commands{add_edge f:CONJ2 -> D; f.label = "nsubj"; f.enhanced=yes}
@@ -1047,14 +1089,50 @@ package coord_dep_left_pck{
       CONJ1 -[1=conj]-> CONJ2;
       CONJ2 -[1=aux|cop]-> AUX;
       AUX.Person = CONJ1.Person;
+      AUX.Number = CONJ1.Number; % ELVIS: Adicionei para concordância
       e:CONJ1 -[1=nsubj]-> D;
       D << CONJ1
       }
     without{CONJ2 -> D}
-    without{CONJ2 -[1=nsubj]-> *}
+    without{CONJ2 -[1=nsubj|csubj]-> *}
     without{* -[1=ref]-> D}
     without{CONJ2 -[orphan]-> *}
     commands{add_edge f:CONJ2 -> D; f.label = "nsubj"; f.enhanced=yes}
+    }
+
+    % ELVIS: Criei para propagar sujeito quando há concordância entre aux e verbos coordenados
+    rule coord_dep_left_nsubj_aux3{
+    pattern{
+      CONJ1 -[1=conj]-> CONJ2;
+      CONJ1 -[1=aux|cop]-> AUX;
+      AUX [VerbForm=Inf];
+      CONJ2 [VerbForm=Inf];
+      e:CONJ1 -[1=nsubj]-> D;
+      D << CONJ1
+      }
+    without{CONJ2 -> D}
+    without{CONJ2 -[1=nsubj|csubj]-> *}
+    without{* -[1=ref]-> D}
+    without{CONJ2 -[orphan]-> *}
+    commands{add_edge f:CONJ2 -> D; f.label = "nsubj"; f.enhanced=yes}
+    }
+
+    % ELVIS: Criei para resolver :pass nos casos acima
+    rule coord_dep_left_nsubj_pass{
+    pattern{
+      HEADCONJ -[1=conj]-> DEPCONJ;
+      DEPCONJ -[1=aux|cop]-> AUX;
+      AUX.Person = HEADCONJ.Person;
+      AUX.Number = HEADCONJ.Number; % ELVIS: Adicionei para concordância
+      e:HEADCONJ -[1=nsubj]-> D;
+      DEPCONJ [Voice=Pass];
+      D << HEADCONJ
+      }
+    without{DEPCONJ -> D}
+    without{DEPCONJ -[1=nsubj|csubj]-> *}
+    without{* -[1=ref]-> D}
+    without{DEPCONJ -[orphan]-> *}
+    commands{add_edge f:DEPCONJ -> D; f.label = "nsubj:pass"; f.enhanced=yes}
     }
 
     rule coord_dep_left{
@@ -1726,7 +1804,7 @@ package elvis_orphan{
 
 package elvis{
   % ELVIS: As regras são lidas de baixo para cima, da última para a primeira.
-  % Novas regras devem ser inseridas aqui no topo.  
+  % Novas regras devem ser inseridas aqui no topo.
 
   % MAGALI: Quando o case introduz um predicado nominal (marca: head de cop), não deveria ser propagado para dependente de conj
   rule corrige_case_cop_conj{
@@ -1852,6 +1930,7 @@ package elvis{
       HEADXCOMP -[1=xcomp]-> DEPXCOMP;
       HEADXCOMP -[1=nsubj]-> SUJHEADXCOMP;
       DEPXCOMP [lemma<>haver];
+      DEPXCOMP [upos<>AUX];
     }
     without{
       DEPXCOMP -[1=nsubj]-> *;
@@ -1859,19 +1938,33 @@ package elvis{
     commands{add_edge f:DEPXCOMP -> SUJHEADXCOMP; f.label = "nsubj"; f.enhanced=yes}
   }
 
+  rule suj_xcomp_pass {
+    pattern{
+      HEADXCOMP -[1=xcomp]-> DEPXCOMP;
+      HEADXCOMP -[1=nsubj]-> SUJHEADXCOMP;
+      DEPXCOMP [lemma<>haver];
+      DEPXCOMP [Voice=Pass];
+    }
+    without{
+      DEPXCOMP -[1=nsubj]-> *;
+    }
+    commands{add_edge f:DEPXCOMP -> SUJHEADXCOMP; f.label = "nsubj:pass"; f.enhanced=yes}
+  }
+
   % ELVIS: Isso eu devo fazer mais tarde.
   % [Isso] é obj de [fazer], e não de [devo]
   % Restrição: Eu o vi chorar.
   % [o] é nsubj de [chorar], e não obj
   % [o] não pode ser PronType=Prs
-  % OBJ [PronType<>Prs]|[!PronType]: O nome disso é "disjunctive condition" - não passa no Grew.fr! Putz.
   rule obj_antes_do_head_xcomp{
     pattern{
       k: HEADXCOMP -[1=obj,enhanced=yes]-> OBJ;
       OBJ << HEADXCOMP;
-      OBJ [PronType<>Prs]|[!PronType];
+      OBJ [Case<>Acc|Dat]|[!Case];
       HEADXCOMP -[1=xcomp]-> DEPXCOMP;
       l: DEPXCOMP -[1=nsubj]-> OBJ;
+      DEPXCOMP [lemma<>ser];
+      DEPXCOMP [upos=VERB|AUX];
     }
     without{
       DEPXCOMP -[1=obj]-> OBJ;
@@ -1882,6 +1975,30 @@ package elvis{
       del_edge l;
     }
   }
+
+  % Igual acima, mas para depxcomp AUX
+  rule obj_antes_do_head_xcomp_aux{
+    pattern{
+      k: HEADXCOMP -[1=obj,enhanced=yes]-> OBJ;
+      OBJ << HEADXCOMP;
+      OBJ [Case<>Acc|Dat]|[!Case];
+      f: HEADXCOMP -[1=xcomp]-> DEPXCOMP;
+      l: DEPXCOMP -[1=nsubj]-> OBJ;
+      DEPXCOMP [lemma=ser];
+      DEPXCOMP [upos=VERB|AUX];
+    }
+    without{
+      DEPXCOMP -[1=obj]-> OBJ;
+    }
+    commands{
+      add_edge a:OBJ -> DEPXCOMP; a.label = "cop"; a.enhanced=yes; 
+      add_edge b:HEADXCOMP -> OBJ; b.label = "xcomp"; b.enhanced=yes;
+      del_edge k;
+      del_edge l;
+      del_edge f;
+    }
+  }
+
 % ELVIS: As regras são lidas de baixo para cima, da última para a primeira.
 % Idealmente, novas regras são colocas no topo desse pacote.
 }

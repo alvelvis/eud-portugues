@@ -34,6 +34,14 @@ def home(conllu="", enhancement=""):
     if request.method == "POST":
         # convert new-line to linux style and add empty line in the end
         conllu = request.values.get("inputText").strip().replace("\r\n", "\n") + "\n\n"
+        conllu_lines = conllu.split("\n")
+        for i, line in enumerate(conllu_lines):
+            if "\t" in line:
+                columns = line.split("\t")
+                if len(columns) == 10:
+                    columns[8] = "_"
+                    conllu_lines[i] = "\t".join(columns)
+        conllu = "\n".join(conllu_lines)
         with open(sentence_path, "w") as f:
             f.write(conllu)
         command = f"grew transform -config iwpt -grs \"{rules_path}\" -strat strat_modificadas -i '{sentence_path}' -o '{sentence_out}'"
