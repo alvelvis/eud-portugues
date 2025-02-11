@@ -2004,7 +2004,7 @@ package elvis{
 % Idealmente, novas regras são colocas no topo desse pacote.
 }
 
-strat strat_modificadas_novas{
+strat strat_modificadas_novas_enhanced{
   Seq(
         Onf(root),
         Onf(deep_features),

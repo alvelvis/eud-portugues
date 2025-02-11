@@ -8,7 +8,10 @@ config_path = os.path.join(app_path, "config.json")
 sentence_path = "sentence.conllu"
 sentence_out = sentence_path.replace('.conllu', '_GREWED.conllu')
 rules_path = "conjunto_regras_porttinari.grs"
-strategy = "strat_modificadas"
+
+with open(rules_path) as f:
+    rules = f.read()
+strategies = [x.split("{")[0].strip() for x in rules.split("strat ")[1:]]
 
 def save_config():
     with open(config_path, "w") as f:
@@ -31,11 +34,12 @@ else:
         config = json.load(f)
 
 @app.route('/', methods="POST GET".split())
-def home(conllu="", enhancement=""):
+def home(conllu="", enhancement="", strategy=""):
     if request.method == "POST":
         # convert new-line to linux style and add empty line in the end
         conllu = request.values.get("inputText").strip().replace("\r\n", "\n") + "\n\n"
-        enhancement = annotate(conllu)
+        strategy = request.values.get("strat")
+        enhancement = annotate(conllu, strategy)
         increase_access_number(conllu.count("\n\n"))
     access_number = config.get("access_number")
     sentences_tested = config.get("sentences_tested")
@@ -45,11 +49,13 @@ def home(conllu="", enhancement=""):
         title="",
         conllu=conllu.strip(),
         enhancement=enhancement,
+        selected_strat=strategy,
         access_number=access_number,
-        sentences_tested=sentences_tested
+        sentences_tested=sentences_tested,
+        strategies=strategies
         )
 
-def annotate(conllu):
+def annotate(conllu, strategy):
     conllu_lines = conllu.split("\n")
     for i, line in enumerate(conllu_lines):
         if "\t" in line:
@@ -86,4 +92,4 @@ if __name__ == "__main__":
     assert all(os.path.exists(x) for x in [conllu_path, rules_path])
     with open(conllu_path) as f:
         conllu = f.read()
-    print(annotate(conllu))
+    print(annotate(conllu, strategy))

@@ -53,6 +53,18 @@
             </div>
 
             <button class="btn btn-lg btn-primary btn-block" type="submit">Annotate</button>
+            <div class="form-label-group"></div>
+                <label for="strat">Strategy:</label>
+                <select class="form-control" name="strat">
+                    {% for strat in strategies %}
+                        {% if strat == selected_strat %}
+                            <option value="{{ strat }}" selected>{{ strat }}</option>
+                        {% else %}
+                            <option value="{{ strat }}">{{ strat }}</option>
+                        {% endif %}
+                    {% endfor %}
+                </select>
+            </div>
             <p class="mt-5 mb-3 text-muted text-center">{% if access_number %}{{access_number}} annotations have been made ({{sentences_tested}} sentences annotated)<br>{% endif %}&copy; 2024</p>
         </form>
     </body>
