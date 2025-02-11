@@ -1224,7 +1224,7 @@ package case_mwe{
     without{ H -[1=case|cc|mark]-> D1; D1 << MWE}
     without{ MWE -[fixed|goeswith]-> D1; D1 << D}
     without{MWE[ExtForm]}
-    commands{MWE.ExtForm=MWE.wordform + "_" + D.wordform; add_edge MWE -[MWE]-> D}
+    commands{MWE.ExtForm=MWE.lemma + "_" + D.lemma; add_edge MWE -[MWE]-> D}
   }
 
   rule propagate_mwe_form{
@@ -1325,7 +1325,7 @@ package case_info{
 
   % The label of the augmented dependency has no extension and the dependency is a basic relation.
   rule add_case_name1{
-    pattern{e: H -[1 = acl|advcl|nmod|obl|xcomp|ccomp|csubj|advmod, !2]-> D; D[Mark]}
+    pattern{e: H -[1 = acl|advcl|nmod|obl, !2]-> D; D[Mark]}
     without{D -[E:ref]-> PRO; H -> PRO}% The relation e is not a relation targeting a relative pronoun, which has moved to the antecedent.
     without{H -[enhanced=yes]-> D}
     without{* -[E:ref]-> D}
@@ -1334,7 +1334,7 @@ package case_info{
 
   % The label of the augmented dependency has no extension and the dependency is a enhanced dependency.
   rule add_case_name1_enhanced{
-    pattern{e: H -[1 = acl|advcl|nmod|obl|xcomp|ccomp|csubj|advmod, !2, enhanced=yes]-> D; D[Mark]}
+    pattern{e: H -[1 = acl|advcl|nmod|obl, !2, enhanced=yes]-> D; D[Mark]}
      without{D -[E:ref]-> PRO; H -> PRO}% The relation e is not a relation targeting a relative pronoun, which has moved to the antecedent.
     without{D[PronType=Rel|"Int,Rel"]}
     commands{e.2 = D.Mark}
@@ -1344,7 +1344,7 @@ package case_info{
   %Ex: email-enronsent05_01-0005 - The premise[H] with which[PRO] the administartion is acting[D] 
   rule add_case_name1_enhanced_ant{
     pattern{
-      e: H -[1 = acl|advcl|nmod|obl|xcomp|ccomp|csubj|advmod, !2, enhanced=yes]-> D;
+      e: H -[1 = acl|advcl|nmod|obl, !2, enhanced=yes]-> D;
       H -> PRO;
       D -[E:ref]-> PRO; PRO[Mark]}
     commands{e.2 = PRO.Mark}
@@ -1352,7 +1352,7 @@ package case_info{
 
   % The label of the augmented relation has an extension.
   rule add_case_name2{
-    pattern{e: H -[1 = acl|advcl|nmod|obl|xcomp|ccomp|csubj|advmod, 2=*,!3]-> D; D[Mark]}
+    pattern{e: H -[1 = acl|advcl|nmod|obl, 2=*,!3]-> D; D[Mark]}
     without{D -[E:ref]-> PRO; H -> PRO}% The relation e is not a relation targeting a relative pronoun, which has moved to the antecedent.
     without{e.2 = D.Mark}
     without{e.1=obl;e.2=agent}% Done in most treebanks but questionable
@@ -1364,7 +1364,8 @@ package case_info{
 
   % The label of the augmented dependency has no extension and the dependency is a enhanced dependency.
   rule add_case_name2_enhanced{
-    pattern{e: H -[1 = acl|advcl|nmod|obl|xcomp|ccomp|csubj|advmod, 2=*, !3, enhanced=yes]-> D; D[Mark]}
+    pattern{e: H -[1 = acl|advcl|nmod|obl, 2=*, !3, enhanced=yes]-> D; D[Mark]}
+    without{e.1=acl; e.2=relcl}
     without{D -[E:ref]-> PRO; H -> PRO}% The relation e is not a relation targeting a relative pronoun, which has moved to the antecedent.
     without{e.1=obl;e.2=agent}% Done in most treebanks but questionable
     without{* -[E:ref]-> D}
@@ -1376,7 +1377,7 @@ package case_info{
   %Ex: email-enronsent05_01-0005 - The premise[H] with which[PRO] the administartion is acting[D] 
   rule add_case_name2_enhanced_ant{
     pattern{
-      e: H -[1 = acl|advcl|nmod|obl|xcomp|ccomp|csubj|advmod, 2=*, !3, enhanced=yes]-> D; H -> PRO;
+      e: H -[1 = acl|advcl|nmod|obl, 2=*, !3, enhanced=yes]-> D; H -> PRO;
       D -[E:ref]-> PRO; PRO[Mark]}
     without{e.1=obl;e.2=agent}% Done in most treebanks but questionable
     without{e.2 = PRO.Mark}
@@ -1387,8 +1388,8 @@ package case_info{
   rule add_case_name1_conj{
     pattern{
       CONJ1 -[1=conj]-> CONJ2;
-      H -[1 = acl|advcl|nmod|obl|xcomp|ccomp|csubj|advmod]-> CONJ1; CONJ1[Mark];
-      e: H -[1 = acl|advcl|nmod|obl|xcomp|ccomp|csubj|advmod, !2]-> CONJ2}
+      H -[1 = acl|advcl|nmod|obl]-> CONJ1; CONJ1[Mark];
+      e: H -[1 = acl|advcl|nmod|obl, !2]-> CONJ2}
     without{CONJ2 -[E:ref]-> PRO; H -> PRO}% The relation e is not a relation targeting a relative pronoun, which has moved to the antecedent.
     without{CONJ2[Mark]}
     without{CONJ1 -[enhanced=yes]-> CONJ2}
@@ -1399,8 +1400,8 @@ package case_info{
   rule add_case_name2_conj{
     pattern{
       CONJ1 -[1=conj]-> CONJ2;
-      H -[1 = acl|advcl|nmod|obl|xcomp|ccomp|csubj|advmod]-> CONJ1; CONJ1[Mark];
-      e: H -[1 = acl|advcl|nmod|obl|xcomp|ccomp|csubj|advmod, 2=*, !3]-> CONJ2}
+      H -[1 = acl|advcl|nmod|obl]-> CONJ1; CONJ1[Mark];
+      e: H -[1 = acl|advcl|nmod|obl, 2=*, !3]-> CONJ2}
     without{e.1=obl;e.2=agent}% Done in most treebanks but questionable
     without{CONJ2[Mark]}
     without{e.2 = CONJ1.Mark}
@@ -1412,7 +1413,7 @@ package case_info{
   rule add_case_name1_relpron{
     pattern{
       H -[ANTREL]-> D;
-      e: H -[1 = acl|advcl|nmod|obl|xcomp|ccomp|csubj|advmod, !2, enhanced =yes]-> D;
+      e: H -[1 = acl|advcl|nmod|obl, !2, enhanced =yes]-> D;
       D -[E:ref]-> PRO; PRO[Mark]}
     without{H -[enhanced=yes]-> D}
     commands{add_edge f: H -> D; f.enhanced=yes; f.2=e.2; f.2 = PRO.Mark}
@@ -1422,7 +1423,7 @@ package case_info{
   rule add_case_name2_relpron{
     pattern{
       H -[ANTREL]-> D;
-      e: H -[1 = acl|advcl|nmod|obl|xcomp|ccomp|csubj|advmod, 2=*, !3, enhanced =yes]-> D;
+      e: H -[1 = acl|advcl|nmod|obl, 2=*, !3, enhanced =yes]-> D;
       D -[E:ref]-> PRO; PRO[Mark]}
     without{e.1=obl;e.2=agent}% Done in most treebanks but questionable
     without{e.2 = PRO.Mark}
@@ -1835,7 +1836,7 @@ package elvis{
   }
 
   % ELVIS: Sujeito não propaga para verbo HAVER
-  % MAGALI: o programa fez propagação de sujeito para o  dependente de conj, mesmo ele tendo lemma=HAVER POS=VERB, que é impessoal, ou seja, não admite sujeito. Essa regra já havia sido explicitada (acho que no sujeito de xcomp), mas parece não estar incluída em conj. Ocorrência em: FOLHA_DOC002012_SENT032
+  % MAGALI: o programa fez propagação de sujeito para o dependente de conj, mesmo ele tendo lemma=HAVER POS=VERB, que é impessoal, ou seja, não admite sujeito. Essa regra já havia sido explicitada (acho que no sujeito de xcomp), mas parece não estar incluída em conj. Ocorrência em: FOLHA_DOC002012_SENT032
   rule corrige_nsubj_de_haver{
     pattern{
       f: HAVER -[1=nsubj,enhanced=yes]-> NSUBJ;
