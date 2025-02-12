@@ -39,7 +39,7 @@ def home(conllu="", enhancement="", strategy=""):
         # convert new-line to linux style and add empty line in the end
         conllu = request.values.get("inputText").strip().replace("\r\n", "\n") + "\n\n"
         strategy = request.values.get("strat")
-        enhancement = annotate(conllu, strategy)
+        enhancement = annotate(conllu, rules_path, strategy)
         increase_access_number(conllu.count("\n\n"))
     access_number = config.get("access_number")
     sentences_tested = config.get("sentences_tested")
@@ -55,7 +55,7 @@ def home(conllu="", enhancement="", strategy=""):
         strategies=strategies
         )
 
-def annotate(conllu, strategy):
+def annotate(conllu, rules_path, strategy):
     conllu_lines = conllu.split("\n")
     for i, line in enumerate(conllu_lines):
         if "\t" in line:
@@ -92,4 +92,4 @@ if __name__ == "__main__":
     assert all(os.path.exists(x) for x in [conllu_path, rules_path])
     with open(conllu_path) as f:
         conllu = f.read()
-    print(annotate(conllu, strategy))
+    print(annotate(conllu, rules_path, strategy))
