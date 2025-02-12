@@ -1623,18 +1623,210 @@ package cleaning_feat{
 }
 
 package elvis_novas{
-  % ELVIS: Sergio Moro perguntou a Palocci se Kontic sabia das ilegalidades cometidas por ele.
-  % [ilegalidades], além de head do acl cujo dependente é [cometidas], é também dependente do nsubj cujo head é [cometidas]
-  rule propaga_nsubjpass_para_acl{
+  % ELVIS: Ele disse que vai aposentar
+  % [Ele] propaga como sujeito de [aposentar]
+  rule propaga_nsubj_de_ccomp_advcl{
     pattern{
-      HEADACL -[1=acl]-> DEPACL;
-      DEPACL [VerbForm=Part,Voice=Pass];
+      HEAD -[1=ccomp|advcl]-> DEP;
+      HEAD -[1=nsubj]-> NSUBJ;
+      HEAD.Person = DEP.Person; % Verbos finitos e infinitivo pessoal
+      HEAD.Number = DEP.Number;
+      DEP [lemma<>haver|chover|ventar|gear|entardecer|anoitecer|nevar|trovejar|relampejar];
     }
-    without {
-      DEPACL -[1=nsubj]-> *
-    }
-    commands{add_edge f: DEPACL -> HEADACL; f.label = "nsubj:pass"; f.enhanced=yes}
+    without { HEAD -[2=de_o_que|conforme|segundo|como]-> DEP }
+    without { DEP -[1=nsubj]-> * }
+    without { DEP -[1=expl,2=impers]-> * }
+    commands{add_edge f: DEP -> NSUBJ; f.label = "nsubj"; f.enhanced=yes}
   }
+
+  rule propaga_nsubj_de_ccomp_advcl_infinitivo{
+    pattern{
+      HEAD -[1=ccomp|advcl]-> DEP;
+      HEAD -[1=nsubj]-> NSUBJ;
+      DEP [!Person,!Number,!Gender]; % Infinitivos não flexionados e gerúndio
+      DEP [upos=VERB];
+      DEP [lemma<>haver|chover|ventar|gear|entardecer|anoitecer|nevar|trovejar|relampejar];
+    }
+    without { HEAD -[2=de_o_que|conforme|segundo|como]-> DEP }
+    without { DEP -[1=aux|cop]-> *}
+    without { DEP -[1=nsubj]-> * }
+    without { DEP -[1=expl,2=impers]-> * }
+    commands{add_edge f: DEP -> NSUBJ; f.label = "nsubj"; f.enhanced=yes}
+  }
+
+  rule propaga_nsubj_de_ccomp_advcl_infinitivo3{
+    pattern{
+      HEAD -[1=ccomp|advcl]-> DEP;
+      HEAD -[1=nsubj]-> NSUBJ;
+      HEAD [!Person,!Number,!Gender]; % Infinitivos não flexionados e gerúndio
+      HEAD [upos=VERB];
+      DEP [lemma<>haver|chover|ventar|gear|entardecer|anoitecer|nevar|trovejar|relampejar];
+    }
+    without { HEAD -[2=de_o_que|conforme|segundo|como]-> DEP }
+    without { DEP -[1=aux|cop]-> * }
+    without { DEP -[1=nsubj]-> * }
+    without { DEP -[1=expl,2=impers]-> * }
+    commands{add_edge f: DEP -> NSUBJ; f.label = "nsubj"; f.enhanced=yes}
+  }
+
+  rule propaga_nsubj_de_ccomp_advcl_infinitivo2{
+    pattern{
+      HEAD -[1=ccomp|advcl]-> DEP;
+      HEAD -[1=nsubj]-> NSUBJ;
+      DEP [Gender,Number];
+      DEP [upos=VERB];
+      HEAD.Number = DEP.Number; % Particípio só concorda em número
+      DEP [lemma<>haver|chover|ventar|gear|entardecer|anoitecer|nevar|trovejar|relampejar];
+    }
+    without { HEAD -[2=de_o_que|conforme|segundo|como]-> DEP }
+    without { DEP -[1=nsubj]-> * }
+    without { DEP -[1=expl,2=impers]-> * }
+    commands{add_edge f: DEP -> NSUBJ; f.label = "nsubj"; f.enhanced=yes}
+  }
+
+  rule propaga_nsubj_de_ccomp_advcl2{
+    pattern{
+      HEAD -[1=ccomp|advcl]-> DEP;
+      HEAD -[1=nsubj]-> NSUBJ;
+      * -[1=xcomp]-> HEAD;
+      DEP [lemma<>haver|chover|ventar|gear|entardecer|anoitecer|nevar|trovejar|relampejar];
+    }
+    without { HEAD -[2=de_o_que|conforme|segundo|como]-> DEP }
+    without { DEP -[1=nsubj]-> * }
+    without { DEP -[1=expl,2=impers]-> * }
+    commands{add_edge f: DEP -> NSUBJ; f.label = "nsubj"; f.enhanced=yes}
+  }
+
+  rule propaga_nsubj_de_ccomp_advcl_aux{
+    pattern{
+      HEAD -[1=ccomp|advcl]-> DEP;
+      DEP -[1=aux|cop]-> AUX;
+      HEAD -[1=nsubj]-> NSUBJ;
+      HEAD.Person = AUX.Person;
+      HEAD.Number = AUX.Number;
+      DEP [lemma<>haver|chover|ventar|gear|entardecer|anoitecer|nevar|trovejar|relampejar];
+    }
+    without { HEAD -[2=de_o_que|conforme|segundo|como]-> DEP }
+    without { DEP -[1=nsubj]-> * }
+    without { DEP -[1=expl,2=impers]-> * }
+    commands{add_edge f: DEP -> NSUBJ; f.label = "nsubj"; f.enhanced=yes}
+  }
+
+  rule propaga_nsubj_de_ccomp_advcl_aux2{
+    pattern{
+      HEAD -[1=ccomp|advcl]-> DEP;
+      HEAD -[1=aux|cop]-> AUX;
+      HEAD -[1=nsubj]-> NSUBJ;
+      DEP.Person = AUX.Person;
+      DEP.Number = AUX.Number;
+      DEP [lemma<>haver|chover|ventar|gear|entardecer|anoitecer|nevar|trovejar|relampejar];
+    }
+    without { HEAD -[2=de_o_que|conforme|segundo|como]-> DEP }
+    without { DEP -[1=nsubj]-> * }
+    without { DEP -[1=expl,2=impers]-> * }
+    commands{add_edge f: DEP -> NSUBJ; f.label = "nsubj"; f.enhanced=yes}
+  }
+
+  rule propaga_nsubj_de_ccomp_advcl_aux3{
+    pattern{
+      HEAD -[1=ccomp|advcl]-> DEP;
+      HEAD -[1=aux|cop]-> AUX1;
+      DEP -[1=aux|cop]-> AUX2;
+      HEAD -[1=nsubj]-> NSUBJ;
+      AUX1.Person = AUX2.Person;
+      AUX1.Number = AUX2.Number;
+      DEP [lemma<>haver|chover|ventar|gear|entardecer|anoitecer|nevar|trovejar|relampejar];
+    }
+    without { HEAD -[2=de_o_que|conforme|segundo|como]-> DEP }
+    without { DEP -[1=nsubj]-> * }
+    without { DEP -[1=expl,2=impers]-> * }
+    commands{add_edge f: DEP -> NSUBJ; f.label = "nsubj"; f.enhanced=yes}
+  }
+
+  rule propaga_nsubj_de_ccomp_advcl_aux4{
+    pattern{
+      HEAD -[1=ccomp|advcl]-> DEP;
+      DEP -[1=aux|cop]-> AUX;
+      HEAD -[1=nsubj]-> NSUBJ;
+      AUX [VerbForm<>Fin];
+      DEP [lemma<>haver|chover|ventar|gear|entardecer|anoitecer|nevar|trovejar|relampejar];
+    }
+    without { HEAD -[2=de_o_que|conforme|segundo|como]-> DEP }
+    without { DEP -[1=nsubj]-> * }
+    without { DEP -[1=expl,2=impers]-> * }
+    commands{add_edge f: DEP -> NSUBJ; f.label = "nsubj"; f.enhanced=yes}
+  }
+
+  rule propaga_nsubj_de_ccomp_advcl_aux5{
+    pattern{
+      HEAD -[1=ccomp|advcl]-> DEP;
+      HEAD -[1=aux|cop]-> AUX;
+      HEAD -[1=nsubj]-> NSUBJ;
+      AUX [VerbForm<>Fin];
+      DEP [lemma<>haver|chover|ventar|gear|entardecer|anoitecer|nevar|trovejar|relampejar];
+    }
+    without { HEAD -[2=de_o_que|conforme|segundo|como]-> DEP }
+    without { DEP -[1=nsubj]-> * }
+    without { DEP -[1=expl,2=impers]-> * }
+    commands{add_edge f: DEP -> NSUBJ; f.label = "nsubj"; f.enhanced=yes}
+  }
+
+  rule propaga_sujeito_acl{
+    pattern{
+      HEADACL -[1=acl,!2]-> DEPACL;
+      DEPACL [VerbForm=Ger|Part];
+      HEADACL [upos<>ADJ|ADV]
+    }
+    without { DEPACL -[1=nsubj]-> * }
+    commands{add_edge f: DEPACL -> HEADACL; f.label = "nsubj"; f.enhanced=yes}
+  }
+
+  rule propaga_sujeito_acl2{
+    pattern{
+      HEADACL -[1=acl,!2]-> DEPACL;
+      HEADACL [upos=ADJ|ADV];
+      HEADACL -[1=nsubj]-> NSUBJ;
+    }
+    without { DEPACL -[1=nsubj]-> * }
+    commands{add_edge f: DEPACL -> NSUBJ; f.label = "nsubj"; f.enhanced=yes}
+  }
+
+  rule propaga_sujeito_acl3{
+    pattern{
+      HEADACL -[1=acl,!2]-> DEPACL;
+      HEADACL [upos=ADJ|ADV];
+      HEADAMOD -[1=amod]-> HEADACL;
+    }
+    without { DEPACL -[1=nsubj]-> * }
+    commands{add_edge f: DEPACL -> HEADAMOD; f.label = "nsubj"; f.enhanced=yes}
+  }
+
+  rule propaga_sujeito_acl4{
+    pattern{
+      HEADADVMOD -[1=advmod]-> DEPADVMOD;
+      DEPADVMOD -[1=acl,!2]-> DEPACL;
+      HEADADVMOD -[1=nsubj]-> NSUBJ;
+    }
+    without { DEPACL -[1=aux|cop]-> * }
+    without { HEADADVMOD.Person <> DEPACL.Person }
+    without { HEADADVMOD.Number <> DEPACL.Number }
+    without { DEPACL -[1=nsubj]-> * }
+    commands{add_edge f: DEPACL -> NSUBJ; f.label = "nsubj"; f.enhanced=yes}
+  }
+
+  rule propaga_sujeito_acl5{
+    pattern{
+      HEADADVMOD -[1=advmod]-> DEPADVMOD;
+      DEPADVMOD -[1=acl,!2]-> DEPACL;
+      HEADADVMOD -[1=nsubj]-> NSUBJ;
+      DEPACL -[1=aux|cop]-> AUX;
+      HEADADVMOD.Person = AUX.Person;
+      HEADADVMOD.Number = AUX.Number;
+    }
+    without { DEPACL -[1=nsubj]-> * }
+    commands{add_edge f: DEPACL -> NSUBJ; f.label = "nsubj"; f.enhanced=yes}
+  }
+
 }
 
 package elvis_limpezas{
@@ -1666,6 +1858,15 @@ package elvis_limpezas{
   rule limpa_multiplos_orphans{
     pattern{NOFORM [multiplos_orphans=yes]}
     commands{del_feat NOFORM.multiplos_orphans}
+  }
+  rule corrige_nsubj_de_passiva{
+    pattern{
+      f: H -[1=nsubj,!2]-> NSUBJ;
+      H [Voice=Pass];
+    }
+    commands{
+      del_edge f; add_edge g: H -> NSUBJ; g.label = "nsubj:pass"; g.enhanced=yes;
+    }
   }
 }
 
@@ -1825,7 +2026,7 @@ package elvis{
     pattern{
       HEADXCOMP -[1=xcomp]-> HAVER;
       f: HEADXCOMP -[1=nsubj,enhanced=yes]-> NSUBJ;
-      HAVER [lemma=haver,upos=VERB];
+      HAVER [lemma=haver|chover|ventar|gear|entardecer|anoitecer|nevar|trovejar|relampejar,upos=VERB];
     }
     without{
       HEADXCOMP -[1=nsubj,!enhanced]-> NSUBJ;
@@ -1840,7 +2041,7 @@ package elvis{
   rule corrige_nsubj_de_haver{
     pattern{
       f: HAVER -[1=nsubj,enhanced=yes]-> NSUBJ;
-      HAVER [lemma=haver,upos=VERB];
+      HAVER [lemma=haver|chover|ventar|gear|entardecer|anoitecer|nevar|trovejar|relampejar,upos=VERB];
     }
     without{
       HAVER -[1=nsubj,!enhanced]-> NSUBJ;
@@ -1930,7 +2131,7 @@ package elvis{
     pattern{
       HEADXCOMP -[1=xcomp]-> DEPXCOMP;
       HEADXCOMP -[1=nsubj]-> SUJHEADXCOMP;
-      DEPXCOMP [lemma<>haver];
+      DEPXCOMP [lemma<>haver|chover|ventar|gear|entardecer|anoitecer|nevar|trovejar|relampejar];
       DEPXCOMP [upos<>AUX];
     }
     without{
@@ -1943,7 +2144,7 @@ package elvis{
     pattern{
       HEADXCOMP -[1=xcomp]-> DEPXCOMP;
       HEADXCOMP -[1=nsubj]-> SUJHEADXCOMP;
-      DEPXCOMP [lemma<>haver];
+      DEPXCOMP [lemma<>haver|chover|ventar|gear|entardecer|anoitecer|nevar|trovejar|relampejar];
       DEPXCOMP [Voice=Pass];
     }
     without{
@@ -2029,6 +2230,7 @@ strat strat_modificadas_novas_enhanced{
         Onf(cleaning_feat),
         Onf(elvis),
         Onf(elvis_novas),
+        Onf(deep_subj_ud),
         Onf(elvis_limpezas),
     )
 }
@@ -2057,6 +2259,7 @@ strat strat_modificadas{
         Onf(copy_basic_enhanced),
         Onf(cleaning_feat),
         Onf(elvis),
+        Onf(deep_subj_ud),
         Onf(elvis_limpezas),
     )
 }
