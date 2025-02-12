@@ -5,9 +5,9 @@ import json
 app = Flask(__name__)
 app_path = os.path.dirname(os.path.abspath(__file__))
 config_path = os.path.join(app_path, "config.json")
-sentence_path = "sentence.conllu"
+sentence_path = os.path.join(app_path, "sentence.conllu")
 sentence_out = sentence_path.replace('.conllu', '_GREWED.conllu')
-rules_path = "conjunto_regras_porttinari.grs"
+rules_path = os.path.join(app_path, "conjunto_regras_porttinari.grs")
 
 with open(rules_path) as f:
     rules = f.read()
