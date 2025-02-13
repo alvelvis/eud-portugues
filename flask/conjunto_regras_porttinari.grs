@@ -1775,7 +1775,8 @@ package elvis_novas{
     pattern{
       HEADACL -[1=acl,!2]-> DEPACL;
       DEPACL [VerbForm=Ger|Part];
-      HEADACL [upos<>ADJ|ADV]
+      HEADACL [upos<>ADJ|ADV];
+      DEPACL [lemma<>haver|chover|ventar|gear|entardecer|anoitecer|nevar|trovejar|relampejar];
     }
     without { DEPACL -[1=nsubj]-> * }
     commands{add_edge f: DEPACL -> HEADACL; f.label = "nsubj"; f.enhanced=yes}
@@ -1786,6 +1787,7 @@ package elvis_novas{
       HEADACL -[1=acl,!2]-> DEPACL;
       HEADACL [upos=ADJ|ADV];
       HEADACL -[1=nsubj]-> NSUBJ;
+      DEPACL [lemma<>haver|chover|ventar|gear|entardecer|anoitecer|nevar|trovejar|relampejar];
     }
     without { DEPACL -[1=nsubj]-> * }
     commands{add_edge f: DEPACL -> NSUBJ; f.label = "nsubj"; f.enhanced=yes}
@@ -1796,6 +1798,7 @@ package elvis_novas{
       HEADACL -[1=acl,!2]-> DEPACL;
       HEADACL [upos=ADJ|ADV];
       HEADAMOD -[1=amod]-> HEADACL;
+      DEPACL [lemma<>haver|chover|ventar|gear|entardecer|anoitecer|nevar|trovejar|relampejar];
     }
     without { DEPACL -[1=nsubj]-> * }
     commands{add_edge f: DEPACL -> HEADAMOD; f.label = "nsubj"; f.enhanced=yes}
@@ -1806,6 +1809,7 @@ package elvis_novas{
       HEADADVMOD -[1=advmod]-> DEPADVMOD;
       DEPADVMOD -[1=acl,!2]-> DEPACL;
       HEADADVMOD -[1=nsubj]-> NSUBJ;
+      DEPACL [lemma<>haver|chover|ventar|gear|entardecer|anoitecer|nevar|trovejar|relampejar];
     }
     without { DEPACL -[1=aux|cop]-> * }
     without { HEADADVMOD.Person <> DEPACL.Person }
@@ -1822,6 +1826,7 @@ package elvis_novas{
       DEPACL -[1=aux|cop]-> AUX;
       HEADADVMOD.Person = AUX.Person;
       HEADADVMOD.Number = AUX.Number;
+      DEPACL [lemma<>haver|chover|ventar|gear|entardecer|anoitecer|nevar|trovejar|relampejar];
     }
     without { DEPACL -[1=nsubj]-> * }
     commands{add_edge f: DEPACL -> NSUBJ; f.label = "nsubj"; f.enhanced=yes}
