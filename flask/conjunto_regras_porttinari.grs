@@ -1771,6 +1771,8 @@ package elvis_novas{
     commands{add_edge f: DEP -> NSUBJ; f.label = "nsubj"; f.enhanced=yes}
   }
 
+  % COMEÇA ACL
+
   rule propaga_sujeito_acl{
     pattern{
       HEADACL -[1=acl,!2]-> DEPACL;
@@ -1832,6 +1834,19 @@ package elvis_novas{
     commands{add_edge f: DEPACL -> NSUBJ; f.label = "nsubj"; f.enhanced=yes}
   }
 
+  rule propaga_sujeito_acl6{
+    pattern{
+      HEADADVMOD -[1=advmod]-> DEPADVMOD;
+      DEPADVMOD -[1=acl,!2]-> DEPACL;
+      HEADADVMOD -[1=nsubj]-> NSUBJ;
+      DEPACL -[1=aux|cop]-> AUX;
+      AUX [VerbForm=Inf];
+      DEPACL [lemma<>haver|chover|ventar|gear|entardecer|anoitecer|nevar|trovejar|relampejar];
+    }
+    without { DEPACL -[1=nsubj]-> * }
+    commands{add_edge f: DEPACL -> NSUBJ; f.label = "nsubj"; f.enhanced=yes}
+  }
+
 }
 
 package elvis_limpezas{
@@ -1873,22 +1888,19 @@ package elvis_limpezas{
       del_edge f; add_edge g: H -> NSUBJ; g.label = "nsubj:pass"; g.enhanced=yes;
     }
   }
+  rule corrige_nsubj_de_ativa{
+    pattern{
+      f: H -[1=nsubj,2=pass]-> NSUBJ;
+      H [!Voice]|[Voice<>Pass];
+    }
+    commands{
+      del_edge f; add_edge g: H -> NSUBJ; g.label = "nsubj"; g.enhanced=yes;
+    }
+  }
 }
 
 package elvis_orphan{
-  % ELVIS: não vamos avaliar a colocação da pontuação, então vou comentar a regra
-  %rule corrige_punct_dependente_do_orphan{
-  %  pattern{
-  %    NOFORM [wordform="__EMPTY__"];
-  %    HEADORPHAN -[1=orphan]-> ORPHAN;
-  %    NOFORM -> HEADORPHAN;
-  %    ORPHAN -[1=punct]-> PUNCT;
-  %    PUNCT << ORPHAN;
-  %  }
-  %  without{NOFORM -[1=punct,enhanced=yes]-> PUNCT}
-  %  commands{add_edge f:NOFORM -> PUNCT; f.label = "punct"; f.enhanced = yes}
-  %}
-
+  
   rule corrige_move_noform_orphan_antes_do_head{
     pattern{
       NOFORM [noform_movido=yes];
