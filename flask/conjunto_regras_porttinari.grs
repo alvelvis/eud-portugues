@@ -1987,13 +1987,23 @@ package elvis_orphan{
     }
   }
 
+  rule remove_noform_not_in_graph{
+    pattern{
+      NOFORM [wordform="__EMPTY__"];
+    }
+    without{* -> NOFORM}
+    commands{
+      del_node NOFORM
+    }
+  }
+
   rule remove_noform_duplicado{
     pattern{
       HEADORPHAN -[1=orphan]-> ORPHAN;
       NOFORM [wordform="__EMPTY__"];
       NOFORM2 [wordform="__EMPTY__"];
       NOFORM -> HEADORPHAN;
-      f: NOFORM2 -> HEADORPHAN;
+      NOFORM2 -> HEADORPHAN;
     }
     commands{
       del_node NOFORM2
