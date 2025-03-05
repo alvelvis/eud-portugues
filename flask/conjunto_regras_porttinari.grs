@@ -278,7 +278,7 @@ package null_nodes_head{
         CONJ1 -[1=xcomp]-> PRED1; CONJ1 << PRED1;
         PRED2[Dupos=ADJ|ADV|NOUN|VERB];
         PRED2 -[orphan]-> *;
-        CONJ1 [DVerbForm]
+        CONJ1 [DVerbForm];
       }
       without{CONJ1 -[obj]-> OB1}
       without{* -[^conj]-> PRED2}
@@ -778,7 +778,7 @@ package coord_gov{
   rule gov{
     pattern{
       CONJ1 -[1=conj]-> CONJ2;
-      e:H -[1 <> acl|advcl|advmod|amod|nmod|nummod|obl|conj|punct|root]-> CONJ1 % Modifiers has a specific treatment.
+      e:H -[1 <> acl|advcl|advmod|amod|nmod|nummod|obl|conj|punct|root|orphan]-> CONJ1 % Modifiers has a specific treatment.
       }
     without{H[Dupos=ADJ]; H -[E:nsubj]-> CONJ1; H << CONJ1}% H is an adjective that is left attributive of CONJ1, but not of the coordination.
     without{ CONJ1 << H; H << CONJ2}
@@ -981,6 +981,18 @@ package coord_gov{
     commands{add_edge H -[E:obl]-> CONJ2}
   }
 
+  % ACRESCENTEI PARA FRASE "Use as pernas artificiais para trechos[obl] curtos ou para ficar[advcl] em pé"
+  % The governor H of the coordination is a predicate, the first conjunct is an adverbial clause modifier of H and the second conjunct is a nominal.
+  rule gov_obl_advcl{
+    pattern{
+      CONJ1 -[1=conj]-> CONJ2;
+      H -[1=obl]-> CONJ1;
+      CONJ2[Dupos=VERB]}
+    without{ CONJ1 << H; H << CONJ2}
+    without{H -> CONJ2}
+    commands{add_edge H -[E:advcl]-> CONJ2}
+  }
+
   % The governor H of the coordination is a predicate, the first conjunct is an oblique complement of H and the second conjunct is a nominal.
   %Ex: answers-20111108084227AAtbjAp_ans-0001 - it failed[H] a test due to lost[CONJ1] or stolen[CONJ2] ...
   rule gov_obl_obl{
@@ -1056,6 +1068,22 @@ package coord_dep_left_pck{
       CONJ1 [upos=ADJ|NOUN];
       CONJ1 -[1=conj]-> CONJ2;
       CONJ1.Number = CONJ2.Number; % ELVIS: Adicionei para concordância
+      e:CONJ1 -[1=nsubj]-> D;
+      D << CONJ1
+      }
+    without{CONJ2 -> D}
+    without{CONJ2 -[1=nsubj|csubj]-> *}
+    without{* -[1=ref]-> D}
+    without{CONJ2 -[orphan]-> *} % ELVIS: Adicionei, para não propagar dependentes de conj caso esse conj seja head de orphan
+    commands{add_edge f:CONJ2 -> D; f.label = "nsubj"; f.enhanced=yes}
+    }
+
+    % ELVIS: Criei para propagar sujeito quando há concordância entre adjetivos
+    rule coord_dep_left_nsubj_adj_verbforminf{
+    pattern{
+      CONJ2 [upos=ADJ]|[VerbForm=Inf];
+      CONJ1 [upos=ADJ]|[VerbForm=Inf];
+      CONJ1 -[1=conj]-> CONJ2;
       e:CONJ1 -[1=nsubj]-> D;
       D << CONJ1
       }
@@ -1180,7 +1208,7 @@ package coord_dep_left_pck{
         e:CONJ1 -[case]-> D; D << CONJ1;
         CONJ2[Dupos=NOUN|NUM|PRON|PROPN|X]}
       without{ CONJ2 -[case|E:case]-> *}
-      without{ D [lemma="entre"] } % ELVIS: Adicionei
+      %without{ D [lemma="entre"] } % ELVIS: Adicionei
       commands{ add_edge CONJ2 -[E:case]-> D}
     }
 
@@ -1241,6 +1269,11 @@ package case_mwe{
     pattern{e:MWE -[MWE]-> D}
     without{ MWE -[fixed|goeswith]-> D1; D << D1}
     commands{del_edge e}
+  }
+
+  rule mwe_a_a_medida_que{
+    pattern{MWE [ExtForm="a_o_medida_que"]}
+    commands{MWE.ExtForm = "a_a_medida_que"}
   }
 }
 
@@ -1850,6 +1883,7 @@ package elvis_novas{
 }
 
 package elvis_limpezas{
+
   % Adiciona o orphan entre head de orphan e head de NOFORM que foi apagado na sintaxe básica
   rule reconstitui_conj_orphan{
     pattern{
@@ -1862,6 +1896,7 @@ package elvis_limpezas{
     }
     commands{add_edge HEADCONJ -[conj]-> HEADORPHAN;}
   }
+  
   rule limpa_cc_punct_orphan{
     pattern{
       NOFORM [wordform="__EMPTY__"];
@@ -1931,6 +1966,33 @@ package elvis_orphan{
     }
   }
 
+  rule move_noform_entre_headorphan_e_modificadores{
+    pattern{
+      HEADORPHAN -[1=orphan]-> *;
+      NOFORM -> HEADORPHAN;
+      NOFORM [wordform="__EMPTY__"];
+      HEADORPHAN -[1=nmod|amod|nummod|det|case|advmod|mark]-> MOD;
+      MOD < NOFORM;
+    }
+    commands{
+      unorder NOFORM;
+      insert NOFORM :< MOD;
+    }
+  }
+
+  rule move_noform_com_modificador{
+    pattern{
+      NOFORM [wordform="__EMPTY__"];
+      NOFORM -[1=advmod]-> MOD;
+      MOD < NOFORM;
+      MOD [lemma<>"não"];
+    }
+    commands{
+      unorder NOFORM;
+      insert NOFORM :< MOD;
+    }
+  }
+
   rule corrige_move_noform_fixed{
     pattern{
       NOFORM [noform_movido=yes];
@@ -1965,6 +2027,9 @@ package elvis_orphan{
       NOFORM [wordform="__EMPTY__", !noform_movido, !multiplos_orphans];
       NOFORM -> HEADORPHAN;
       HEADORPHAN << ORPHAN;
+    }
+    without{
+      NOFORM -[1=obj]-> HEADORPHAN; % Se for obj, faz sentido o NOFORM ficar antes do HEADORPHAN
     }
     commands{
       unorder NOFORM;
@@ -2019,6 +2084,7 @@ package elvis_orphan{
       NOFORM.lemma = CONJ.lemma;
     }
   }
+
   rule feats_noform {
     pattern{
       NOFORM [wordform="__EMPTY__", !Voice];
@@ -2029,6 +2095,52 @@ package elvis_orphan{
       NOFORM.Voice = CONJ.Voice;
     }
   }
+
+  % Limpando conj que desaparece após inclusão do NOFORM
+  rule limpando_conj_apos_noform{
+    pattern{
+      f: HEADCONJ -[1=conj]-> DEPCONJ;
+      NOFORM [wordform="__EMPTY__"];
+      HEADCONJ -[1=conj]-> NOFORM;
+      NOFORM -> DEPCONJ;
+    }
+    commands{
+      del_edge f;
+    }
+  }
+
+  rule corrigindo_dep_nsubj{
+    pattern{
+      f: NOFORM -[1=xcomp, 2=pred, enhanced=yes]-> XCOMPPRED;
+      NOFORM [wordform=__EMPTY__];
+      XCOMPPRED << NOFORM;
+    }
+    without{
+      NOFORM -[1=nsubj]-> *;
+    }
+    commands{
+      del_edge f;
+      add_edge g: NOFORM -> XCOMPPRED; g.label = "nsubj"; g.enhanced=yes;
+    }
+  }
+
+  rule corrigindo_dep_xcomp{
+    pattern{
+      f: NOFORM -[1=dep, enhanced=yes]-> DEP;
+      NOFORM [wordform=__EMPTY__];
+      HEADCONJ -[1=conj]-> NOFORM;
+      HEADCONJ -[1=xcomp]-> DEPXCOMP;
+      DEP >> NOFORM;
+    }
+    without{
+      NOFORM -[1=xcomp]-> *;
+    }
+    commands{
+      del_edge f;
+      add_edge g: NOFORM -> DEP; g.label = "xcomp"; g.enhanced=yes;
+    }
+  }
+
 }
 
 package elvis{
@@ -2090,6 +2202,7 @@ package elvis{
     }
     commands{del_edge f}
   }
+
   % ELVIS: A companhia diz que o medicamento permite a os pacientes fazerem algumas ações simples sozinhos, como se sentar, levantar e até andar.
   % [pacientes] é nsubj do dependente de xcomp [fazerem]
   % Segundo Magali, isso só acontece com os obl introduzidos por [a] e com o head de xcomp [permitir]
