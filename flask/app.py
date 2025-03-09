@@ -1,6 +1,7 @@
 from flask import Flask, render_template, request
 import os, subprocess, sys
 import json
+import requests
 
 app = Flask(__name__)
 app_path = os.path.dirname(os.path.abspath(__file__))
@@ -56,6 +57,22 @@ def home(conllu="", enhancement="", strategy=""):
         )
 
 def annotate(conllu, rules_path, strategy):
+    if not "\t" in conllu:
+        url = "https://lindat.mff.cuni.cz/services/udpipe/api/process"
+        params = {
+            "model": "portuguese-petrogold-ud-2.15-241121",
+            "tokenizer": "",
+            "tagger": "",
+            "parser": "",
+            "data": conllu
+        }
+        response = requests.post(url, data=params)
+        if response.status_code == 200:
+            result = response.json()
+            conllu = result.get("result", "")
+        else:
+            return "Error from UDPipe API: {response.status_code} {response.text}"
+
     conllu_lines = conllu.split("\n")
     for i, line in enumerate(conllu_lines):
         if "\t" in line:
