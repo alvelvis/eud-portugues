@@ -638,7 +638,9 @@ package deep_subj_ud{
       pattern{
         PRED -[1=xcomp]-> DPRED;
         %DPRED[upos=ADJ|ADV|VERB];
-        e:PRED -[1=csubj|nsubj]-> SUBJ}
+        e:PRED -[1=csubj|nsubj]-> SUBJ;
+        PRED [lemma<>mandar|deixar|ouvir|permitir|possibilitar]; % ELVIS Acrescentei, porque nesses casos o objeto do verbo é o sujeito do dependente de xcomp, e se o objeto estiver elíptico, não tem sujeito
+        }
       without{ * -[E:ref]-> SUBJ}% When a relative pronoun is subject, its antecedent is assigned the function of enhanced subject
       without{DPRED[DVerbForm=Part, DTense=Past]}
       without{DPRED -[1=aux,2=pass]-> *} % ELVIS: Modifiquei para aceitar aux:pass enhanced (antes só aceitava básico -[aux:pass]->)
@@ -655,7 +657,9 @@ package deep_subj_ud{
       pattern{
         PRED -[1=xcomp]-> DPRED;
         PRED -[1=nsubj]-> SUBJ;
-        DPRED -[1=aux,2=pass]-> *} % ELVIS: Modifiquei para aceitar aux:pass enhanced (antes só aceitava básico -[aux:pass]->)
+        DPRED -[1=aux,2=pass]-> *; % ELVIS: Modifiquei para aceitar aux:pass enhanced (antes só aceitava básico -[aux:pass]->)
+        PRED [lemma<>mandar|deixar|ouvir|permitir|possibilitar]; % ELVIS Acrescentei, porque nesses casos o objeto do verbo é o sujeito do dependente de xcomp, e se o objeto estiver elíptico, não tem sujeito
+      }
       without{ * -[E:ref]-> SUBJ}% When a relative pronoun is subject, its antecedent is assigned the function of enhanced subject
       without{DPRED[NullSubject=Yes]}
       without{DPRED -[1=csubj|nsubj]-> *}
@@ -668,7 +672,9 @@ package deep_subj_ud{
       pattern{
         PRED -[1=xcomp]-> DPRED; DPRED[upos=VERB];
         PRED -[1=nsubj]-> SUBJ;
-        DPRED -[1=expl,2=pass]-> PRO}
+        DPRED -[1=expl,2=pass]-> PRO;
+        PRED [lemma<>mandar|deixar|ouvir|permitir|possibilitar]; % ELVIS Acrescentei, porque nesses casos o objeto do verbo é o sujeito do dependente de xcomp, e se o objeto estiver elíptico, não tem sujeito
+        }
       without{ * -[E:ref]-> SUBJ}% When a relative pronoun is subject, its antecedent is assigned the function of enhanced subject
       without{DPRED[DVerbForm=Part, DTense=Past]}
       without{PRED -[obj]-> *}
@@ -682,7 +688,9 @@ package deep_subj_ud{
     rule xcomp_nsubj_past-part{
       pattern{
         PRED -[1=xcomp]-> DPRED; DPRED[upos=VERB,Voice=Pass];
-        PRED -[1=nsubj]-> SUBJ}
+        PRED -[1=nsubj]-> SUBJ;
+        PRED [lemma<>mandar|deixar|ouvir|permitir|possibilitar]; % ELVIS Acrescentei, porque nesses casos o objeto do verbo é o sujeito do dependente de xcomp, e se o objeto estiver elíptico, não tem sujeito
+        }
       without{ * -[E:ref]-> SUBJ}% When a relative pronoun is subject, its antecedent is assigned the function of enhanced subject
       without{DPRED[NullSubject=Yes]}
       without{PRED -[obj]-> *}
@@ -695,7 +703,9 @@ package deep_subj_ud{
     rule xcomp_nsubj_cop{
       pattern{
         PRED -[1=xcomp]-> DPRED; DPRED -[cop]-> *;
-        PRED -[1=nsubj]-> SUBJ}
+        PRED -[1=nsubj]-> SUBJ;
+        PRED [lemma<>mandar|deixar|ouvir|permitir|possibilitar]; % ELVIS Acrescentei, porque nesses casos o objeto do verbo é o sujeito do dependente de xcomp, e se o objeto estiver elíptico, não tem sujeito
+        }
       without{ * -[E:ref]-> SUBJ}% When a relative pronoun is subject, its antecedent is assigned the function of enhanced subject
       without{DPRED[NullSubject=Yes]}
       without{DPRED -[1=csubj|nsubj]-> *}
@@ -2273,6 +2283,7 @@ package elvis{
       HEADXCOMP -[1=nsubj]-> SUJHEADXCOMP;
       DEPXCOMP [lemma<>haver|chover|ventar|gear|entardecer|anoitecer|nevar|trovejar|relampejar];
       DEPXCOMP [upos<>AUX];
+      HEADXCOMP [lemma<>mandar|deixar|ouvir|permitir|possibilitar]; % ELVIS Acrescentei, porque nesses casos o objeto do verbo é o sujeito do dependente de xcomp, e se o objeto estiver elíptico, não tem sujeito
     }
     without{
       DEPXCOMP -[1=nsubj]-> *;
