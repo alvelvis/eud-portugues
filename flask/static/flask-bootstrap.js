@@ -6,3 +6,10 @@ textarea.addEventListener('keydown', (e) => {
     document.execCommand("insertText", false, "\t")
   }
 })
+
+textarea.addEventListener('keydown', (e) => {
+  if (e.ctrlKey && e.keyCode === 13) {
+    e.preventDefault()
+    document.querySelector('#annotate').click()
+  }
+})

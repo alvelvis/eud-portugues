@@ -46,9 +46,12 @@
             {% if enhancement %}
             <a href="#" onclick="navigator.clipboard.writeText(validationOutput.innerHTML)">Copy output to clipboard</a><br>
             <pre id="validationOutput">{{enhancement}}</pre>
-            <iframe id="visualiser" src="https://souelvis.dev/enhanced-graph-visualiser/visualise.html?focus=true&text={{encoded_enhancement}}" width="100%"></iframe>
+            <div style="width:100%; overflow:auto;">
+                <iframe id="visualiser" src="https://souelvis.dev/enhanced-graph-visualiser/visualise.html?focus=true&text={{encoded_enhancement}}" style="border:none; width:999999px; height:auto;"></iframe>
+            </div>
             {% endif %}
 
+            <hr>
             <div class="form-label-group">
                 Sentence(s):
                 <textarea id="inputText" name="inputText" class="form-control inputText" style="margin-top:5px" required autofocus>{{conllu}}</textarea>
@@ -67,7 +70,7 @@
                     {% endfor %}
                 </select>
             </div>
-            <br><button class="btn btn-lg btn-primary btn-block" type="submit">Annotate</button>
+            <br><button id="annotate" class="btn btn-lg btn-primary btn-block" type="submit">Annotate (Ctrl+Enter)</button>
             <p class="mt-5 mb-3 text-muted text-center">{% if access_number %}{{access_number}} annotations have been made ({{sentences_tested}} sentences annotated)<br>{% endif %}&copy; 2024-2025</p>
         </form>
     </body>
