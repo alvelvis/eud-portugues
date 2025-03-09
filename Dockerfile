@@ -22,4 +22,4 @@ ENV OCAML_TOPLEVEL_PATH='/root/.opam/5.2.0/lib/toplevel'
 ENV MANPATH=':/root/.opam/5.2.0/man'
 ENV PATH='/root/.opam/5.2.0/bin:/usr/local/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin'
 
-CMD gunicorn app:app
+CMD ["gunicorn", "app:app"]
