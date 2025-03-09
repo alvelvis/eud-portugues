@@ -2,6 +2,7 @@ from flask import Flask, render_template, request
 import os, subprocess, sys
 import json
 import requests
+import urllib
 
 app = Flask(__name__)
 app_path = os.path.dirname(os.path.abspath(__file__))
@@ -45,16 +46,18 @@ def home(conllu="", enhancement="", strategy=""):
     access_number = config.get("access_number")
     sentences_tested = config.get("sentences_tested")
 
+    encoded_enhancement = urllib.parse.quote(enhancement)
     return render_template(
         'index.html', 
         title="",
         conllu=conllu.strip(),
         enhancement=enhancement,
+        encoded_enhancement=encoded_enhancement,
         selected_strat=strategy,
         access_number=access_number,
         sentences_tested=sentences_tested,
         strategies=strategies
-        )
+    )
 
 def annotate(conllu, rules_path, strategy):
     if not "\t" in conllu:

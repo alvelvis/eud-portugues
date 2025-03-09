@@ -46,6 +46,7 @@
             {% if enhancement %}
             <a href="#" onclick="navigator.clipboard.writeText(validationOutput.innerHTML)">Copy output to clipboard</a><br>
             <pre id="validationOutput">{{enhancement}}</pre>
+            <iframe id="visualiser" src="https://souelvis.dev/enhanced-graph-visualiser/visualise.html?focus=true&text={{encoded_enhancement}}" width="100%"></iframe>
             {% endif %}
 
             <div class="form-label-group">
