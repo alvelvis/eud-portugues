@@ -73,6 +73,8 @@ def annotate(conllu, rules_path, strategy):
         if response.status_code == 200:
             result = response.json()
             conllu = result.get("result", "")
+            conllu_lines = conllu.split("\n")
+            conllu = "\n".join(line for line in conllu_lines if not any(x in line for x in ["# newdoc", "# newpar"]))
         else:
             return "Error from UDPipe API: {response.status_code} {response.text}"
 
