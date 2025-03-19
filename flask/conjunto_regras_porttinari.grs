@@ -470,6 +470,17 @@ package rel_pron{
       commands{add_edge H -[ANTREL]->PRO}
     }
 
+  % ELVIS: acrescentei essa regra pro caso de "[quem] se exalta não deve desqualificar..."
+    rule pron_quem{
+      pattern{
+        PRO -[!enhanced]-> H; PRO [Dupos=ADV|DET|PRON,PronType=Ind|Rel,lemma=quem]; PRO -[acl:relcl]-> H}
+      without{* -[E:ref]-> PRO}
+      without{H -> PRO}
+      without{* -[E:ref]-> H}
+      without{PRO[ErrorPronType=Yes]}
+      commands{add_edge f: H -> PRO; f.label="nsubj"; f.enhanced=yes}
+    }
+
   % ELVIS: vizinho com o_qual há relações
   % ("o" estava como ANTREL de "qual", porque "qual" é pronome relativo,
   % mas o correto era "vizinho" ser ANTREL de "o", head do fixed)
@@ -486,7 +497,7 @@ package rel_pron{
 
   % The ANTREL relation is shifted from its source to the governor of this source.
     rule shift_ref{
-      pattern{e:H -[ANTREL]-> PRO; H1 -[!enhanced]-> H}
+      pattern{e:H -[ANTREL]-> PRO; H1 -[!enhanced]-> H;}
       without{H1 -[acl:relcl|advcl:cleft|conj]-> H}
       without{ H1 -[ANTREL]-> PRO}
       commands{del_edge e; add_edge H1 -[ANTREL]-> PRO}
@@ -1218,7 +1229,7 @@ package coord_dep_left_pck{
         e:CONJ1 -[case]-> D; D << CONJ1;
         CONJ2[Dupos=NOUN|NUM|PRON|PROPN|X]}
       without{ CONJ2 -[case|E:case]-> *}
-      %without{ D [lemma="entre"] } % ELVIS: Adicionei
+      without{ D [lemma="entre"] } % ELVIS: Adicionei
       commands{ add_edge CONJ2 -[E:case]-> D}
     }
 
@@ -1920,13 +1931,15 @@ package elvis_limpezas{
     pattern{NOFORM [noform_movido=yes]}
     commands{del_feat NOFORM.noform_movido}
   }
+
   rule limpa_multiplos_orphans{
     pattern{NOFORM [multiplos_orphans=yes]}
     commands{del_feat NOFORM.multiplos_orphans}
   }
+
   rule corrige_nsubj_de_passiva{
     pattern{
-      f: H -[1=nsubj,!2]-> NSUBJ;
+      f: H -[1=nsubj,!2,enhanced=yes]-> NSUBJ;
       H [Voice=Pass];
     }
     commands{
@@ -1935,7 +1948,7 @@ package elvis_limpezas{
   }
   rule corrige_nsubj_de_ativa{
     pattern{
-      f: H -[1=nsubj,2=pass]-> NSUBJ;
+      f: H -[1=nsubj,2=pass,enhanced=yes]-> NSUBJ;
       H [!Voice]|[Voice<>Pass];
     }
     commands{
