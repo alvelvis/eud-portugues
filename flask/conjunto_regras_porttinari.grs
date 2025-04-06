@@ -473,7 +473,8 @@ package rel_pron{
   % ELVIS: acrescentei essa regra pro caso de "[quem] se exalta não deve desqualificar..."
     rule pron_quem{
       pattern{
-        PRO -[!enhanced]-> H; PRO [Dupos=ADV|DET|PRON,PronType=Ind|Rel,lemma=quem]; PRO -[acl:relcl]-> H}
+        PRO -[!enhanced]-> H; PRO [Dupos=ADV|DET|PRON,PronType=Ind|Rel,lemma=quem]; PRO -[acl:relcl]-> H
+      }
       without{* -[E:ref]-> PRO}
       without{H -> PRO}
       without{* -[E:ref]-> H}
@@ -561,7 +562,7 @@ package rel_pron{
       commands{add_edge f:H -> ANT; f.label="nsubj:pass"; f.enhanced = yes;}
     }
 
-  % ELVIS: Incluí para lidar com voz ative (igual regra de cima)
+  % ELVIS: Incluí para lidar com voz ativa (igual regra de cima)
     rule move_basic_dep_nsubj_active{
       pattern{
         ANT -[E:ref]-> PRO;
@@ -1740,6 +1741,22 @@ package elvis_novas{
     commands{add_edge f: DEP -> NSUBJ; f.label = "nsubj"; f.enhanced=yes}
   }
 
+  rule propaga_nsubj_de_ccomp_advcl_infinitivo2{
+    pattern{
+      HEAD -[1=ccomp|advcl]-> DEP;
+      HEAD -[1=nsubj]-> NSUBJ;
+      DEP [Gender,Number];
+      DEP [upos=VERB];
+      HEAD.Number = DEP.Number; % Particípio só concorda em número
+      DEP [lemma<>haver|chover|ventar|gear|entardecer|anoitecer|nevar|trovejar|relampejar];
+    }
+    without { HEAD -[2=de_o_que|conforme|segundo|como]-> DEP }
+    without { DEP -[1=nsubj]-> * }
+    without { * -[1=ref]-> NSUBJ } % Se for caso de acl:relcl, quem deve ser propagado como nsubj é o antecendente, não o pron ref
+    without { DEP -[1=expl,2=impers]-> * }
+    commands{add_edge f: DEP -> NSUBJ; f.label = "nsubj"; f.enhanced=yes}
+  }
+
   rule propaga_nsubj_de_ccomp_advcl_infinitivo3{
     pattern{
       HEAD -[1=ccomp|advcl]-> DEP;
@@ -1756,13 +1773,60 @@ package elvis_novas{
     commands{add_edge f: DEP -> NSUBJ; f.label = "nsubj"; f.enhanced=yes}
   }
 
-  rule propaga_nsubj_de_ccomp_advcl_infinitivo2{
+  rule propaga_nsubj_de_ccomp_advcl_infinitivo4{
     pattern{
       HEAD -[1=ccomp|advcl]-> DEP;
       HEAD -[1=nsubj]-> NSUBJ;
-      DEP [Gender,Number];
+      HEAD [Gender,Number];
       DEP [upos=VERB];
       HEAD.Number = DEP.Number; % Particípio só concorda em número
+      DEP [lemma<>haver|chover|ventar|gear|entardecer|anoitecer|nevar|trovejar|relampejar];
+    }
+    without { HEAD -[2=de_o_que|conforme|segundo|como]-> DEP }
+    without { DEP -[1=nsubj]-> * }
+    without { * -[1=ref]-> NSUBJ } % Se for caso de acl:relcl, quem deve ser propagado como nsubj é o antecendente, não o pron ref
+    without { DEP -[1=expl,2=impers]-> * }
+    commands{add_edge f: DEP -> NSUBJ; f.label = "nsubj"; f.enhanced=yes}
+  }
+
+  rule propaga_nsubj_de_advcl_adjetivo_noun{
+    pattern{
+      HEAD -[1=advcl]-> DEP;
+      HEAD -[1=nsubj]-> NSUBJ;
+      DEP [Number];
+      DEP [upos=ADJ|NOUN];
+      HEAD.Number = DEP.Number; % ADJETIVO nesse caso só concorda em número
+      DEP [lemma<>haver|chover|ventar|gear|entardecer|anoitecer|nevar|trovejar|relampejar];
+    }
+    without { HEAD -[2=de_o_que|conforme|segundo|como]-> DEP }
+    without { DEP -[1=nsubj]-> * }
+    without { * -[1=ref]-> NSUBJ } % Se for caso de acl:relcl, quem deve ser propagado como nsubj é o antecendente, não o pron ref
+    without { DEP -[1=expl,2=impers]-> * }
+    commands{add_edge f: DEP -> NSUBJ; f.label = "nsubj"; f.enhanced=yes}
+  }
+
+  rule propaga_nsubj_de_advcl_adjetivo_aux{
+    pattern{
+      HEAD -[1=advcl]-> DEP;
+      HEAD -[1=aux|cop]-> AUX;
+      HEAD -[1=nsubj]-> NSUBJ;
+      DEP [Number];
+      DEP [upos=ADJ|NOUN];
+      AUX.Number = DEP.Number; % ADJETIVO nesse caso só concorda em número
+      DEP [lemma<>haver|chover|ventar|gear|entardecer|anoitecer|nevar|trovejar|relampejar];
+    }
+    without { HEAD -[2=de_o_que|conforme|segundo|como]-> DEP }
+    without { DEP -[1=nsubj]-> * }
+    without { * -[1=ref]-> NSUBJ } % Se for caso de acl:relcl, quem deve ser propagado como nsubj é o antecendente, não o pron ref
+    without { DEP -[1=expl,2=impers]-> * }
+    commands{add_edge f: DEP -> NSUBJ; f.label = "nsubj"; f.enhanced=yes}
+  }
+
+  rule propaga_nsubj_de_advcl_adverbio{
+    pattern{
+      HEAD -[1=advcl]-> DEP;
+      HEAD -[1=nsubj]-> NSUBJ;
+      DEP [upos=ADV]; % Advérbio não concorda em nada
       DEP [lemma<>haver|chover|ventar|gear|entardecer|anoitecer|nevar|trovejar|relampejar];
     }
     without { HEAD -[2=de_o_que|conforme|segundo|como]-> DEP }
