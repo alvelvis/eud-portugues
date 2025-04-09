@@ -2477,7 +2477,7 @@ package elvis{
 % Idealmente, novas regras são colocas no topo desse pacote.
 }
 
-strat strat_modificadas_novas_enhanced{
+strat eud_portuguese_extended{
   Seq(
         Onf(root),
         Onf(deep_features),
@@ -2507,7 +2507,7 @@ strat strat_modificadas_novas_enhanced{
     )
 }
 
-strat strat_modificadas{
+strat eud_portuguese{
     Seq(
         Onf(root),
         Onf(deep_features),
