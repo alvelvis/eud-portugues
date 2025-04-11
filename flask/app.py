@@ -36,12 +36,17 @@ else:
         config = json.load(f)
 
 @app.route('/', methods="POST GET".split())
-def home(conllu="", enhancement="", strategy=""):
+def home(conllu="", enhancement="", strategy="", udpipe_model=""):
+
+    udpipe_models = fetch_udpipe_models()
+    udpipe_model = [x for x in udpipe_models if "petrogold" in x][0]
+
     if request.method == "POST":
         # convert new-line to linux style and add empty line in the end
         conllu = request.values.get("inputText").strip().replace("\r\n", "\n") + "\n\n"
         strategy = request.values.get("strat")
-        enhancement = annotate(conllu, rules_path, strategy)
+        udpipe_model = request.values.get("udpipe_model")
+        enhancement = annotate(conllu, rules_path, strategy, udpipe_model)
         increase_access_number(conllu.count("\n\n"))
     access_number = config.get("access_number")
     sentences_tested = config.get("sentences_tested")
@@ -56,14 +61,25 @@ def home(conllu="", enhancement="", strategy=""):
         selected_strat=strategy,
         access_number=access_number,
         sentences_tested=sentences_tested,
-        strategies=strategies
+        strategies=strategies,
+        selected_model=udpipe_model,
+        udpipe_models=udpipe_models,
     )
 
-def annotate(conllu, rules_path, strategy):
+def fetch_udpipe_models():
+    url = "https://lindat.mff.cuni.cz/services/udpipe/api/models"
+    response = requests.get(url)
+    if response.status_code == 200:
+        models = response.json()["models"]
+        return list(models.keys())
+    else:
+        return []
+
+def annotate(conllu, rules_path, strategy, udpipe_model):
     if not "\t" in conllu:
         url = "https://lindat.mff.cuni.cz/services/udpipe/api/process"
         params = {
-            "model": "portuguese-petrogold-ud-2.15-241121",
+            "model": udpipe_model,
             "tokenizer": "",
             "tagger": "",
             "parser": "",
@@ -111,7 +127,8 @@ if __name__ == "__main__":
     conllu_path = sys.argv[1]
     rules_path = sys.argv[2]
     strategy = sys.argv[3]
+    udpipe_model = sys.argv[4] if len(sys.argv) > 4 else None
     assert all(os.path.exists(x) for x in [conllu_path, rules_path])
     with open(conllu_path) as f:
         conllu = f.read()
-    print(annotate(conllu, rules_path, strategy))
+    print(annotate(conllu, rules_path, strategy, udpipe_model))

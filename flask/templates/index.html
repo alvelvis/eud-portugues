@@ -39,14 +39,14 @@
                 <p>Paste a basic <a href='https://universaldependencies.org' target="_blank">Universal Dependencies analysis</a> in the box below and get its <a href='https://universaldependencies.org/u/overview/enhanced-syntax.html' target="_blank">enhanced version</a>, which is produced by a series of <a href='https://aclanthology.org/2023.udfestbr-1.5/' target="_blank">annotation rules for Portuguese</a>.<br>Any annotation in the 9th column of the <a href="https://universaldependencies.org/format.html" target="_blank">CoNLL-U</a> file is erased before performing a new annotation.</p>
                 <p>Paste a raw sentence, and the sentence will be parsed using <a href="https://lindat.mff.cuni.cz/services/udpipe/info.php" target="_blank">UDPipe</a> before EUD annotation.</p>
                 <hr>
-                <a href="https://github.com/alvelvis/eud-portugues">Check API usage at GitHub@alvelvis</a> - <a href="https://gitlab.inria.fr/grew">grew</a> - <a href="https://github.com/icepoint666/shopping-more">template</a> - <a href="https://souelvis.dev/enhanced-graph-visualiser/visualise.html">visualization tool</a><br>
+                <a href="https://github.com/alvelvis/eud-portugues">Check API usage at GitHub</a> - <a href="https://gitlab.inria.fr/grew">grew</a> - <a href="https://github.com/icepoint666/shopping-more">template</a> - <a href="https://souelvis.dev/enhanced-graph-visualiser/visualise.html">visualization tool</a><br>
             </div>
 
             {% if enhancement %}
             <a href="#" onclick="navigator.clipboard.writeText(validationOutput.innerHTML)">Copy output to clipboard</a><br>
             <pre id="validationOutput">{{enhancement}}</pre>
-            <div style="width:100%; overflow:auto;">
-                <iframe id="visualiser" src="https://souelvis.dev/enhanced-graph-visualiser/visualise.html?focus=true&text={{encoded_enhancement}}" style="border:none; width:999999px; height:auto;"></iframe>
+            <div style="max-width:100%; overflow-y: hidden; overflow-x: hidden;" id="visualiser">
+                <iframe id="visualiser" src="https://souelvis.dev/enhanced-graph-visualiser/visualise.html?focus=true&text={{encoded_enhancement}}" style="margin-left: -20px; border:none; width:999999px; height: 200px;"></iframe>
             </div>
             {% endif %}
 
@@ -57,17 +57,31 @@
                 <label for="inputText"></label>
             </div>
 
-            <div class="form-label-group"></div>
-                <label for="strat">EUD Strategy:</label>
-                <select class="form-control" name="strat">
-                    {% for strat in strategies %}
-                        {% if strat == selected_strat %}
-                            <option value="{{ strat }}" selected>{{ strat }}</option>
-                        {% else %}
-                            <option value="{{ strat }}">{{ strat }}</option>
-                        {% endif %}
-                    {% endfor %}
-                </select>
+            <div class="form-row">
+                <div class="form-group col-md-6">
+                    <label for="strat">EUD Strategy:</label>
+                    <select class="form-control" name="strat">
+                        {% for strat in strategies %}
+                            {% if strat == selected_strat %}
+                                <option value="{{ strat }}" selected>{{ strat }}</option>
+                            {% else %}
+                                <option value="{{ strat }}">{{ strat }}</option>
+                            {% endif %}
+                        {% endfor %}
+                    </select>
+                </div>
+                <div class="form-group col-md-6">
+                    <label for="udpipe_model">UDPipe Model (for parsing):</label>
+                    <select class="form-control" name="udpipe_model">
+                        {% for model in udpipe_models %}
+                            {% if model == selected_model %}
+                                <option value="{{ model }}" selected>{{ model }}</option>
+                            {% else %}
+                                <option value="{{ model }}">{{ model }}</option>
+                            {% endif %}
+                        {% endfor %}
+                    </select>
+                </div>
             </div>
             <br><button id="annotate" class="btn btn-lg btn-primary btn-block" type="submit">Annotate (Ctrl+Enter)</button>
             <p class="mt-5 mb-3 text-muted text-center">&copy; 2024-2025</p>
