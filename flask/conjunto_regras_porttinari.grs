@@ -1713,9 +1713,9 @@ package elvis_novas{
   }
 
   % ELVIS: Quando o verb tem dois sujeitos, os dois devem ser propagados
-  rule propaga_outros_sujeitos_do_mesmo_head{
+  rule propaga_outros_sujeitos_do_mesmo_head_ccomp_advcl{
     pattern{
-      HEAD -[1=ccomp|advcl|acl]-> DEP;
+      HEAD -[1=ccomp|advcl]-> DEP;
       HEAD -[1=nsubj]-> NSUBJ1;
       HEAD -[1=nsubj]-> NSUBJ2;
       DEP -[1=nsubj]-> NSUBJ1;
@@ -1723,6 +1723,26 @@ package elvis_novas{
     without{DEP -[1=nsubj]-> NSUBJ2}
     without{* -[1=ref]-> NSUBJ2}
     commands{add_edge f: DEP -> NSUBJ2; f.label = "nsubj"; f.enhanced=yes}
+  }
+
+  rule propaga_outros_sujeitos_do_mesmo_head_acl{
+    pattern{
+      HEAD1 -[1=acl, !2]-> DEP;
+      HEAD2 -[1=acl, !2]-> DEP;
+      DEP -[1=nsubj]-> HEAD1;
+    }
+    without{DEP -[1=nsubj]-> HEAD2}
+    commands{add_edge f: DEP -> HEAD2; f.label = "nsubj"; f.enhanced=yes}
+  }
+
+  rule propaga_outros_sujeitos_do_mesmo_head_acl2{
+    pattern{
+      HEADACL -[1=acl, !2]-> DEPACL;
+      DEPACL -[1=nsubj]-> NSUBJ1;
+      NSUBJ2 -[1=conj]-> NSUBJ1;
+    }
+    without{DEPACL -[1=nsubj]-> NSUBJ2}
+    commands{add_edge f: DEPACL -> NSUBJ2; f.label = "nsubj"; f.enhanced=yes}
   }
 
   rule propaga_nsubj_de_ccomp_advcl_infinitivo{
@@ -1939,6 +1959,9 @@ package elvis_novas{
       DEPACL [lemma<>haver|chover|ventar|gear|entardecer|anoitecer|nevar|trovejar|relampejar];
     }
     without { DEPACL -[1=nsubj]-> * }
+    without { DEPACL -[1=cop]-> COP }
+    without { TER [lemma="ter"]; DEPACL -[1=aux]-> TER }
+    without { DEPACL -[1=expl,2=impers]-> * }
     commands{add_edge f: DEPACL -> HEADACL; f.label = "nsubj"; f.enhanced=yes}
   }
 
@@ -1950,7 +1973,9 @@ package elvis_novas{
       DEPACL [lemma<>haver|chover|ventar|gear|entardecer|anoitecer|nevar|trovejar|relampejar];
     }
     without { DEPACL -[1=nsubj]-> * }
+    without { DEPACL -[1=cop]-> COP }
     without { * -[1=ref]-> NSUBJ } % Se for caso de acl:relcl, quem deve ser propagado como nsubj é o antecendente, não o pron ref
+    without { DEPACL -[1=expl,2=impers]-> * }
     commands{add_edge f: DEPACL -> NSUBJ; f.label = "nsubj"; f.enhanced=yes}
   }
 
@@ -1962,6 +1987,8 @@ package elvis_novas{
       DEPACL [lemma<>haver|chover|ventar|gear|entardecer|anoitecer|nevar|trovejar|relampejar];
     }
     without { DEPACL -[1=nsubj]-> * }
+    without { DEPACL -[1=cop]-> COP }
+    without { DEPACL -[1=expl,2=impers]-> * }
     commands{add_edge f: DEPACL -> HEADAMOD; f.label = "nsubj"; f.enhanced=yes}
   }
 
@@ -1977,6 +2004,7 @@ package elvis_novas{
     without { HEADADVMOD.Number <> DEPACL.Number }
     without { DEPACL -[1=nsubj]-> * }
     without { * -[1=ref]-> NSUBJ } % Se for caso de acl:relcl, quem deve ser propagado como nsubj é o antecendente, não o pron ref
+    without { DEPACL -[1=expl,2=impers]-> * }
     commands{add_edge f: DEPACL -> NSUBJ; f.label = "nsubj"; f.enhanced=yes}
   }
 
@@ -1992,6 +2020,7 @@ package elvis_novas{
     }
     without { DEPACL -[1=nsubj]-> * }
     without { * -[1=ref]-> NSUBJ } % Se for caso de acl:relcl, quem deve ser propagado como nsubj é o antecendente, não o pron ref
+    without { DEPACL -[1=expl,2=impers]-> * }
     commands{add_edge f: DEPACL -> NSUBJ; f.label = "nsubj"; f.enhanced=yes}
   }
 
@@ -2006,6 +2035,7 @@ package elvis_novas{
     }
     without { DEPACL -[1=nsubj]-> * }
     without { * -[1=ref]-> NSUBJ } % Se for caso de acl:relcl, quem deve ser propagado como nsubj é o antecendente, não o pron ref
+    without { DEPACL -[1=expl,2=impers]-> * }
     commands{add_edge f: DEPACL -> NSUBJ; f.label = "nsubj"; f.enhanced=yes}
   }
 
@@ -2045,6 +2075,26 @@ package elvis_limpezas{
     commands{del_feat NOFORM.multiplos_orphans}
   }
 
+  rule corrige_nsubj_csubj{
+    pattern {
+      X -[1=csubj]-> CSUBJ;
+      f: Y -[1=nsubj, !2, enhanced=yes]-> CSUBJ;
+    }
+    commands {
+      f.label = "csubj"; f.enhanced=yes
+    }
+  }
+
+  rule corrige_nsubj_csubj-pass{
+    pattern {
+      X -[1=csubj]-> CSUBJ;
+      f: Y -[1=nsubj, 2=pass, enhanced=yes]-> CSUBJ;
+    }
+    commands {
+      f.label = "csubj:pass"; f.enhanced=yes
+    }
+  }
+
   rule corrige_nsubj_de_passiva{
     pattern{
       f: H -[1=nsubj,!2,enhanced=yes]-> NSUBJ;
@@ -2054,6 +2104,7 @@ package elvis_limpezas{
       del_edge f; add_edge g: H -> NSUBJ; g.label = "nsubj:pass"; g.enhanced=yes;
     }
   }
+  
   rule corrige_nsubj_de_ativa{
     pattern{
       f: H -[1=nsubj,2=pass,enhanced=yes]-> NSUBJ;
