@@ -1707,6 +1707,7 @@ package elvis_novas{
       HEAD.Number = DEP.Number;
       DEP [lemma<>haver|chover|ventar|gear|entardecer|anoitecer|nevar|trovejar|relampejar];
     }
+    without { HEAD -[2=speech]-> DEP }
     without { HEAD -[2=de_o_que|conforme|segundo|como]-> DEP }
     without { DEP -[1=nsubj]-> * }
     without { * -[1=ref]-> NSUBJ } % Se for caso de acl:relcl, quem deve ser propagado como nsubj é o antecendente, não o pron ref
@@ -1722,6 +1723,7 @@ package elvis_novas{
       HEAD -[1=nsubj]-> NSUBJ2;
       DEP -[1=nsubj]-> NSUBJ1;
     }
+    without { HEAD -[2=speech]-> DEP }
     without{DEP -[1=nsubj]-> NSUBJ2}
     without{* -[1=ref]-> NSUBJ2}
     commands{add_edge f: DEP -> NSUBJ2; f.label = "nsubj"; f.enhanced=yes}
@@ -1733,6 +1735,7 @@ package elvis_novas{
       HEAD2 -[1=acl, !2]-> DEP;
       DEP -[1=nsubj]-> HEAD1;
     }
+    without { HEAD -[2=speech]-> DEP }
     without{DEP -[1=nsubj]-> HEAD2}
     commands{add_edge f: DEP -> HEAD2; f.label = "nsubj"; f.enhanced=yes}
   }
@@ -1743,6 +1746,7 @@ package elvis_novas{
       DEPACL -[1=nsubj]-> NSUBJ1;
       NSUBJ2 -[1=conj]-> NSUBJ1;
     }
+    without { HEAD -[2=speech]-> DEP }
     without{DEPACL -[1=nsubj]-> NSUBJ2}
     commands{add_edge f: DEPACL -> NSUBJ2; f.label = "nsubj"; f.enhanced=yes}
   }
@@ -1755,6 +1759,7 @@ package elvis_novas{
       DEP [upos=VERB];
       DEP [lemma<>haver|chover|ventar|gear|entardecer|anoitecer|nevar|trovejar|relampejar];
     }
+    without { HEAD -[2=speech]-> DEP }
     without { HEAD -[2=de_o_que|conforme|segundo|como]-> DEP }
     without { DEP -[1=aux|cop]-> *}
     without { DEP -[1=nsubj]-> * }
@@ -1772,6 +1777,7 @@ package elvis_novas{
       HEAD.Number = DEP.Number; % Particípio só concorda em número
       DEP [lemma<>haver|chover|ventar|gear|entardecer|anoitecer|nevar|trovejar|relampejar];
     }
+    without { HEAD -[2=speech]-> DEP }
     without { HEAD -[2=de_o_que|conforme|segundo|como]-> DEP }
     without { DEP -[1=aux|cop]-> AUX }
     without { DEP -[1=nsubj]-> * }
@@ -1788,6 +1794,7 @@ package elvis_novas{
       HEAD [upos=VERB];
       DEP [lemma<>haver|chover|ventar|gear|entardecer|anoitecer|nevar|trovejar|relampejar];
     }
+    without { HEAD -[2=speech]-> DEP }
     without { HEAD -[2=de_o_que|conforme|segundo|como]-> DEP }
     without { DEP -[1=aux|cop]-> * }
     without { DEP -[1=nsubj]-> * }
@@ -1805,6 +1812,7 @@ package elvis_novas{
       HEAD.Number = DEP.Number; % Particípio só concorda em número
       DEP [lemma<>haver|chover|ventar|gear|entardecer|anoitecer|nevar|trovejar|relampejar];
     }
+    without { HEAD -[2=speech]-> DEP }
     without { HEAD -[2=de_o_que|conforme|segundo|como]-> DEP }
     without { DEP -[1=nsubj]-> * }
     without { * -[1=ref]-> NSUBJ } % Se for caso de acl:relcl, quem deve ser propagado como nsubj é o antecendente, não o pron ref
@@ -1821,6 +1829,7 @@ package elvis_novas{
       HEAD.Number = DEP.Number; % ADJETIVO nesse caso só concorda em número
       DEP [lemma<>haver|chover|ventar|gear|entardecer|anoitecer|nevar|trovejar|relampejar];
     }
+    without { HEAD -[2=speech]-> DEP }
     without { HEAD -[2=de_o_que|conforme|segundo|como]-> DEP }
     without { DEP -[1=nsubj]-> * }
     without { * -[1=ref]-> NSUBJ } % Se for caso de acl:relcl, quem deve ser propagado como nsubj é o antecendente, não o pron ref
@@ -1838,6 +1847,7 @@ package elvis_novas{
       AUX.Number = DEP.Number; % ADJETIVO nesse caso só concorda em número
       DEP [lemma<>haver|chover|ventar|gear|entardecer|anoitecer|nevar|trovejar|relampejar];
     }
+    without { HEAD -[2=speech]-> DEP }
     without { HEAD -[2=de_o_que|conforme|segundo|como]-> DEP }
     without { DEP -[1=nsubj]-> * }
     without { * -[1=ref]-> NSUBJ } % Se for caso de acl:relcl, quem deve ser propagado como nsubj é o antecendente, não o pron ref
@@ -1852,6 +1862,7 @@ package elvis_novas{
       DEP [upos=ADV]; % Advérbio não concorda em nada
       DEP [lemma<>haver|chover|ventar|gear|entardecer|anoitecer|nevar|trovejar|relampejar];
     }
+    without { HEAD -[2=speech]-> DEP }
     without { HEAD -[2=de_o_que|conforme|segundo|como]-> DEP }
     without { DEP -[1=nsubj]-> * }
     without { * -[1=ref]-> NSUBJ } % Se for caso de acl:relcl, quem deve ser propagado como nsubj é o antecendente, não o pron ref
@@ -1866,6 +1877,7 @@ package elvis_novas{
       * -[1=xcomp]-> HEAD;
       DEP [lemma<>haver|chover|ventar|gear|entardecer|anoitecer|nevar|trovejar|relampejar];
     }
+    without { HEAD -[2=speech]-> DEP }
     without { HEAD -[2=de_o_que|conforme|segundo|como]-> DEP }
     without { DEP -[1=nsubj]-> * }
     without { * -[1=ref]-> NSUBJ } % Se for caso de acl:relcl, quem deve ser propagado como nsubj é o antecendente, não o pron ref
@@ -1882,6 +1894,7 @@ package elvis_novas{
       HEAD.Number = AUX.Number;
       DEP [lemma<>haver|chover|ventar|gear|entardecer|anoitecer|nevar|trovejar|relampejar];
     }
+    without { HEAD -[2=speech]-> DEP }
     without { HEAD -[2=de_o_que|conforme|segundo|como]-> DEP }
     without { DEP -[1=nsubj]-> * }
     without { * -[1=ref]-> NSUBJ } % Se for caso de acl:relcl, quem deve ser propagado como nsubj é o antecendente, não o pron ref
@@ -1898,6 +1911,7 @@ package elvis_novas{
       DEP.Number = AUX.Number;
       DEP [lemma<>haver|chover|ventar|gear|entardecer|anoitecer|nevar|trovejar|relampejar];
     }
+    without { HEAD -[2=speech]-> DEP }
     without { HEAD -[2=de_o_que|conforme|segundo|como]-> DEP }
     without { DEP -[1=nsubj]-> * }
     without { * -[1=ref]-> NSUBJ } % Se for caso de acl:relcl, quem deve ser propagado como nsubj é o antecendente, não o pron ref
@@ -1915,6 +1929,7 @@ package elvis_novas{
       AUX1.Number = AUX2.Number;
       DEP [lemma<>haver|chover|ventar|gear|entardecer|anoitecer|nevar|trovejar|relampejar];
     }
+    without { HEAD -[2=speech]-> DEP }
     without { HEAD -[2=de_o_que|conforme|segundo|como]-> DEP }
     without { DEP -[1=nsubj]-> * }
     without { * -[1=ref]-> NSUBJ } % Se for caso de acl:relcl, quem deve ser propagado como nsubj é o antecendente, não o pron ref
@@ -1930,6 +1945,7 @@ package elvis_novas{
       AUX [VerbForm<>Fin];
       DEP [lemma<>haver|chover|ventar|gear|entardecer|anoitecer|nevar|trovejar|relampejar];
     }
+    without { HEAD -[2=speech]-> DEP }
     without { HEAD -[2=de_o_que|conforme|segundo|como]-> DEP }
     without { DEP -[1=nsubj]-> * }
     without { * -[1=ref]-> NSUBJ } % Se for caso de acl:relcl, quem deve ser propagado como nsubj é o antecendente, não o pron ref
@@ -1945,6 +1961,7 @@ package elvis_novas{
       AUX [VerbForm<>Fin];
       DEP [lemma<>haver|chover|ventar|gear|entardecer|anoitecer|nevar|trovejar|relampejar];
     }
+    without { HEAD -[2=speech]-> DEP }
     without { HEAD -[2=de_o_que|conforme|segundo|como]-> DEP }
     without { DEP -[1=nsubj]-> * }
     without { * -[1=ref]-> NSUBJ } % Se for caso de acl:relcl, quem deve ser propagado como nsubj é o antecendente, não o pron ref
