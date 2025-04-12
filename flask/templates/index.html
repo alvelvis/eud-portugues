@@ -43,8 +43,8 @@
             </div>
 
             {% if enhancement %}
-            <h2>Enhanced Annotation Output</h2>
             <div style="background-color: white; padding: 20px; border-radius: 10px;">
+                <h2>Enhanced Annotation Output</h2>
                 <a href="#" onclick="navigator.clipboard.writeText(validationOutput.innerHTML)">Copy output to clipboard</a><br>
                 <pre id="validationOutput">{{enhancement}}</pre>
                 <div style="max-width:100%; overflow-y: hidden; overflow-x: hidden;" id="visualiser">
