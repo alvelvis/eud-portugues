@@ -2063,7 +2063,7 @@ package elvis_novas{
   rule propaga_sujeito_aclrelcl{
     pattern{
       HEADACLRELCL -[acl:relcl]-> DEPACLRELCL;
-      HEADHEADACLRELCL -[nsubj|nsubj:pass]-> NSUBJ;
+      HEADHEADACLRELCL -[1=nsubj]-> NSUBJ;
       HEADHEADACLRELCL -> HEADACLRELCL;
       HEADHEADACLRELCL [Person,Number];
       DEPACLRELCL [Person,Number];
@@ -2081,7 +2081,7 @@ package elvis_novas{
   rule propaga_sujeito_aclrelcl_aux1{
     pattern{
       HEADACLRELCL -[acl:relcl]-> DEPACLRELCL;
-      HEADHEADACLRELCL -[nsubj|nsubj:pass]-> NSUBJ;
+      HEADHEADACLRELCL -[1=nsubj]-> NSUBJ;
       HEADHEADACLRELCL -> HEADACLRELCL;
       HEADHEADACLRELCL -[1=aux|cop]-> AUX;
       AUX [Person,Number];
@@ -2098,7 +2098,7 @@ package elvis_novas{
   rule propaga_sujeito_aclrelcl_aux2{
     pattern{
       HEADACLRELCL -[acl:relcl]-> DEPACLRELCL;
-      HEADHEADACLRELCL -[nsubj|nsubj:pass]-> NSUBJ;
+      HEADHEADACLRELCL -[1=nsubj]-> NSUBJ;
       HEADHEADACLRELCL -> HEADACLRELCL;
       DEPACLRELCL -[1=aux|cop]-> AUX;
       HEADHEADACLRELCL [Person,Number];
@@ -2115,7 +2115,7 @@ package elvis_novas{
   rule propaga_sujeito_aclrelcl_aux3{
     pattern{
       HEADACLRELCL -[acl:relcl]-> DEPACLRELCL;
-      HEADHEADACLRELCL -[nsubj|nsubj:pass]-> NSUBJ;
+      HEADHEADACLRELCL -[1=nsubj]-> NSUBJ;
       HEADHEADACLRELCL -> HEADACLRELCL;
       HEADHEADACLRELCL -[1=aux|cop]-> AUX1;
       DEPACLRELCL -[1=aux|cop]-> AUX2;
