@@ -2042,6 +2042,78 @@ package elvis_novas{
     commands{add_edge f: DEPACL -> NSUBJ; f.label = "nsubj"; f.enhanced=yes}
   }
 
+  % ELVIS: COMEÇA PROPAGAÇÃO DE SUJEITO DE ACL:RELCL
+
+  rule propaga_sujeito_aclrelcl{
+    pattern{
+      HEADACLRELCL -[acl:relcl]-> DEPACLRELCL;
+      HEADHEADACLRELCL -[nsubj|nsubj:pass]-> NSUBJ;
+      HEADHEADACLRELCL -> HEADACLRELCL;
+      HEADHEADACLRELCL [Person,Number];
+      DEPACLRELCL [Person,Number];
+      HEADHEADACLRELCL.Person = DEPACLRELCL.Person;
+      HEADHEADACLRELCL.Number = DEPACLRELCL.Number;
+      DEPACLRELCL [lemma<>haver|chover|ventar|gear|entardecer|anoitecer|nevar|trovejar|relampejar];
+    }
+    without{ DEPACLRELCL -[1=nsubj]-> * }
+    without{ DEPACLRELCL -[1=aux|cop]-> * }
+    without{ HEADHEADACLRELCL -[1=aux|cop]-> * }
+    without{ DEPACLRELCL -[1=expl,2=impers]-> * }
+    commands{add_edge f: DEPACLRELCL -> NSUBJ; f.label = "nsubj"; f.enhanced=yes}
+  }
+
+  rule propaga_sujeito_aclrelcl_aux1{
+    pattern{
+      HEADACLRELCL -[acl:relcl]-> DEPACLRELCL;
+      HEADHEADACLRELCL -[nsubj|nsubj:pass]-> NSUBJ;
+      HEADHEADACLRELCL -> HEADACLRELCL;
+      HEADHEADACLRELCL -[1=aux|cop]-> AUX;
+      AUX [Person,Number];
+      DEPACLRELCL [Person,Number];
+      AUX.Person = DEPACLRELCL.Person;
+      AUX.Number = DEPACLRELCL.Number;
+      DEPACLRELCL [lemma<>haver|chover|ventar|gear|entardecer|anoitecer|nevar|trovejar|relampejar];
+    }
+    without{ DEPACLRELCL -[1=nsubj]-> * }
+    without{ DEPACLRELCL -[1=expl,2=impers]-> * }
+    commands{add_edge f: DEPACLRELCL -> NSUBJ; f.label = "nsubj"; f.enhanced=yes}
+  }
+
+  rule propaga_sujeito_aclrelcl_aux2{
+    pattern{
+      HEADACLRELCL -[acl:relcl]-> DEPACLRELCL;
+      HEADHEADACLRELCL -[nsubj|nsubj:pass]-> NSUBJ;
+      HEADHEADACLRELCL -> HEADACLRELCL;
+      DEPACLRELCL -[1=aux|cop]-> AUX;
+      HEADHEADACLRELCL [Person,Number];
+      AUX [Person,Number];
+      HEADHEADACLRELCL.Person = AUX.Person;
+      HEADHEADACLRELCL.Number = AUX.Number;
+      DEPACLRELCL [lemma<>haver|chover|ventar|gear|entardecer|anoitecer|nevar|trovejar|relampejar];
+    }
+    without{ DEPACLRELCL -[1=nsubj]-> * }
+    without{ DEPACLRELCL -[1=expl,2=impers]-> * }
+    commands{add_edge f: DEPACLRELCL -> NSUBJ; f.label = "nsubj"; f.enhanced=yes}
+  }
+
+  rule propaga_sujeito_aclrelcl_aux3{
+    pattern{
+      HEADACLRELCL -[acl:relcl]-> DEPACLRELCL;
+      HEADHEADACLRELCL -[nsubj|nsubj:pass]-> NSUBJ;
+      HEADHEADACLRELCL -> HEADACLRELCL;
+      HEADHEADACLRELCL -[1=aux|cop]-> AUX1;
+      DEPACLRELCL -[1=aux|cop]-> AUX2;
+      AUX1 [Person,Number];
+      AUX2 [Person,Number];
+      AUX1.Person = AUX2.Person;
+      AUX1.Number = AUX2.Number;
+      DEPACLRELCL [lemma<>haver|chover|ventar|gear|entardecer|anoitecer|nevar|trovejar|relampejar];
+    }
+    without{ DEPACLRELCL -[1=nsubj]-> * }
+    without{ DEPACLRELCL -[1=expl,2=impers]-> * }
+    commands{add_edge f: DEPACLRELCL -> NSUBJ; f.label = "nsubj"; f.enhanced=yes}
+  }
+
 }
 
 package elvis_limpezas{
