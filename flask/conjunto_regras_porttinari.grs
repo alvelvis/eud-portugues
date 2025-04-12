@@ -1697,6 +1697,41 @@ package cleaning_feat{
 }
 
 package elvis_novas{
+  % ELVIS: Quando o verb tem dois sujeitos, os dois devem ser propagados
+  rule propaga_outros_sujeitos_do_mesmo_head_ccomp_advcl{
+    pattern{
+      HEAD -[1=ccomp|advcl]-> DEP;
+      HEAD -[1=nsubj]-> NSUBJ1;
+      HEAD -[1=nsubj]-> NSUBJ2;
+      DEP -[1=nsubj]-> NSUBJ1;
+    }
+    without{DEP -[1=nsubj]-> NSUBJ2}
+    without{* -[1=ref]-> NSUBJ2}
+    commands{add_edge f: DEP -> NSUBJ2; f.label = "nsubj"; f.enhanced=yes}
+  }
+
+  rule propaga_outros_sujeitos_do_mesmo_head_acl{
+    pattern{
+      HEAD1 -[1=acl, !2]-> DEP;
+      HEAD2 -[1=acl, !2]-> DEP;
+      DEP -[1=nsubj]-> HEAD1;
+    }
+    without{DEP -[1=nsubj]-> HEAD2}
+    commands{add_edge f: DEP -> HEAD2; f.label = "nsubj"; f.enhanced=yes}
+  }
+
+  rule propaga_outros_sujeitos_do_mesmo_head_acl2{
+    pattern{
+      HEADACL -[1=acl, !2]-> DEPACL;
+      DEPACL -[1=nsubj]-> NSUBJ1;
+      NSUBJ2 -[1=conj]-> NSUBJ1;
+    }
+    without{DEPACL -[1=nsubj]-> NSUBJ2}
+    commands{add_edge f: DEPACL -> NSUBJ2; f.label = "nsubj"; f.enhanced=yes}
+  }
+
+  % ELVIS: Propagação de sujeito para ADVCL/CCOMP
+
   % ELVIS: Ele disse que vai aposentar
   % [Ele] propaga como sujeito de [aposentar]
   rule propaga_nsubj_de_ccomp_advcl{
@@ -1713,42 +1748,6 @@ package elvis_novas{
     without { * -[1=ref]-> NSUBJ } % Se for caso de acl:relcl, quem deve ser propagado como nsubj é o antecendente, não o pron ref
     without { DEP -[1=expl,2=impers]-> * }
     commands{add_edge f: DEP -> NSUBJ; f.label = "nsubj"; f.enhanced=yes}
-  }
-
-  % ELVIS: Quando o verb tem dois sujeitos, os dois devem ser propagados
-  rule propaga_outros_sujeitos_do_mesmo_head_ccomp_advcl{
-    pattern{
-      HEAD -[1=ccomp|advcl]-> DEP;
-      HEAD -[1=nsubj]-> NSUBJ1;
-      HEAD -[1=nsubj]-> NSUBJ2;
-      DEP -[1=nsubj]-> NSUBJ1;
-    }
-    without { HEAD -[2=speech]-> DEP }
-    without{DEP -[1=nsubj]-> NSUBJ2}
-    without{* -[1=ref]-> NSUBJ2}
-    commands{add_edge f: DEP -> NSUBJ2; f.label = "nsubj"; f.enhanced=yes}
-  }
-
-  rule propaga_outros_sujeitos_do_mesmo_head_acl{
-    pattern{
-      HEAD1 -[1=acl, !2]-> DEP;
-      HEAD2 -[1=acl, !2]-> DEP;
-      DEP -[1=nsubj]-> HEAD1;
-    }
-    without { HEAD -[2=speech]-> DEP }
-    without{DEP -[1=nsubj]-> HEAD2}
-    commands{add_edge f: DEP -> HEAD2; f.label = "nsubj"; f.enhanced=yes}
-  }
-
-  rule propaga_outros_sujeitos_do_mesmo_head_acl2{
-    pattern{
-      HEADACL -[1=acl, !2]-> DEPACL;
-      DEPACL -[1=nsubj]-> NSUBJ1;
-      NSUBJ2 -[1=conj]-> NSUBJ1;
-    }
-    without { HEAD -[2=speech]-> DEP }
-    without{DEPACL -[1=nsubj]-> NSUBJ2}
-    commands{add_edge f: DEPACL -> NSUBJ2; f.label = "nsubj"; f.enhanced=yes}
   }
 
   rule propaga_nsubj_de_ccomp_advcl_infinitivo{
@@ -2134,6 +2133,17 @@ package elvis_novas{
 }
 
 package elvis_limpezas{
+
+  rule multiplos_sujeitos{
+    pattern{
+      X -[1=nsubj]-> NSUBJ1;
+      X -[1=nsubj]-> NSUBJ2;
+      HEAD -[1=nsubj]-> NSUBJ1;
+    }
+    without{ HEAD -[1=nsubj]-> NSUBJ2 }
+    without{ * -[1=ref]-> NSUBJ2 }
+    commands{ add_edge f: HEAD -> NSUBJ2; f.label = "nsubj"; f.enhanced="yes" }
+  }
 
   % Adiciona o orphan entre head de orphan e head de NOFORM que foi apagado na sintaxe básica
   rule reconstitui_conj_orphan{
