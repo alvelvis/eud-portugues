@@ -43,14 +43,18 @@
             </div>
 
             {% if enhancement %}
-            <a href="#" onclick="navigator.clipboard.writeText(validationOutput.innerHTML)">Copy output to clipboard</a><br>
-            <pre id="validationOutput">{{enhancement}}</pre>
-            <div style="max-width:100%; overflow-y: hidden; overflow-x: hidden;" id="visualiser">
-                <iframe id="visualiser" src="https://souelvis.dev/enhanced-graph-visualiser/visualise.html?focus=true&text={{encoded_enhancement}}" style="margin-left: -30px; border:none; width:999999px; height: 200px;"></iframe>
+            <h2>Enhanced Annotation Output</h2>
+            <div style="background-color: white; padding: 20px; border-radius: 10px;">
+                <a href="#" onclick="navigator.clipboard.writeText(validationOutput.innerHTML)">Copy output to clipboard</a><br>
+                <pre id="validationOutput">{{enhancement}}</pre>
+                <div style="max-width:100%; overflow-y: hidden; overflow-x: hidden;" id="visualiser">
+                    <iframe id="visualiser" src="https://souelvis.dev/enhanced-graph-visualiser/visualise.html?focus=true&text={{encoded_enhancement}}" style="margin-left: -30px; border:none; width:999999px; height: 200px;"></iframe>
+                </div>
             </div>
             {% endif %}
 
             <hr>
+            <h2>Input a Sentence</h2>
             <div class="form-label-group">
                 Input a sentence in the CoNLL-U format or a raw sentence:
                 <textarea id="inputText" name="inputText" class="form-control inputText" style="margin-top:5px" required autofocus>{{conllu}}</textarea>
