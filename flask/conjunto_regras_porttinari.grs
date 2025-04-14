@@ -1705,7 +1705,7 @@ package elvis_novas{
       HEAD -[1=nsubj]-> NSUBJ2;
       DEP -[1=nsubj]-> NSUBJ1;
     }
-    without{DEP -[1=nsubj]-> NSUBJ2}
+    without{DEP -[1=nsubj|csubj]-> NSUBJ2}
     without{* -[1=ref]-> NSUBJ2}
     commands{add_edge f: DEP -> NSUBJ2; f.label = "nsubj"; f.enhanced=yes}
   }
@@ -1716,7 +1716,7 @@ package elvis_novas{
       HEAD2 -[1=acl, !2]-> DEP;
       DEP -[1=nsubj]-> HEAD1;
     }
-    without{DEP -[1=nsubj]-> HEAD2}
+    without{DEP -[1=nsubj|csubj]-> HEAD2}
     without{ * -[1=ref]-> HEAD2 } % Se for caso de acl:relcl, quem deve ser propagado como nsubj é o antecendente, não o pron ref
     commands{add_edge f: DEP -> HEAD2; f.label = "nsubj"; f.enhanced=yes}
   }
@@ -1727,7 +1727,7 @@ package elvis_novas{
       DEPACL -[1=nsubj]-> NSUBJ1;
       NSUBJ2 -[1=conj]-> NSUBJ1;
     }
-    without{DEPACL -[1=nsubj]-> NSUBJ2}
+    without{DEPACL -[1=nsubj|csubj]-> NSUBJ2}
     without{ * -[1=ref]-> NSUBJ2 } % Se for caso de acl:relcl, quem deve ser propagado como nsubj é o antecendente, não o pron ref
     commands{add_edge f: DEPACL -> NSUBJ2; f.label = "nsubj"; f.enhanced=yes}
   }
@@ -1746,7 +1746,7 @@ package elvis_novas{
     }
     without { HEAD -[2=speech]-> DEP }
     without { HEAD -[2=de_o_que|conforme|segundo|como]-> DEP }
-    without { DEP -[1=nsubj]-> * }
+    without { DEP -[1=nsubj|csubj]-> * }
     without { * -[1=ref]-> NSUBJ } % Se for caso de acl:relcl, quem deve ser propagado como nsubj é o antecendente, não o pron ref
     without { DEP -[1=expl,2=impers]-> * }
     commands{add_edge f: DEP -> NSUBJ; f.label = "nsubj"; f.enhanced=yes}
@@ -1763,7 +1763,44 @@ package elvis_novas{
     without { HEAD -[2=speech]-> DEP }
     without { HEAD -[2=de_o_que|conforme|segundo|como]-> DEP }
     without { DEP -[1=aux|cop]-> *}
-    without { DEP -[1=nsubj]-> * }
+    without { DEP -[1=nsubj|csubj]-> * }
+    without { * -[1=ref]-> NSUBJ } % Se for caso de acl:relcl, quem deve ser propagado como nsubj é o antecendente, não o pron ref
+    without { DEP -[1=expl,2=impers]-> * }
+    commands{add_edge f: DEP -> NSUBJ; f.label = "nsubj"; f.enhanced=yes}
+  }
+
+  rule propaga_nsubj_de_ccomp_advcl_infinitivo_aux{
+    pattern{
+      HEAD -[1=ccomp|advcl]-> DEP;
+      HEAD -[1=nsubj]-> NSUBJ;
+      HEAD [!Person,!Number,!Gender]; % Infinitivos não flexionados e gerúndio
+      DEP -[1=aux|cop]-> AUX;
+      DEP [upos=VERB];
+      DEP [lemma<>haver|chover|ventar|gear|entardecer|anoitecer|nevar|trovejar|relampejar];
+    }
+    without { HEAD -[2=speech]-> DEP }
+    without { HEAD -[2=de_o_que|conforme|segundo|como]-> DEP }
+    without { HEAD -[1=aux|cop]-> *}
+    without { DEP -[1=nsubj|csubj]-> * }
+    without { * -[1=ref]-> NSUBJ } % Se for caso de acl:relcl, quem deve ser propagado como nsubj é o antecendente, não o pron ref
+    without { DEP -[1=expl,2=impers]-> * }
+    commands{add_edge f: DEP -> NSUBJ; f.label = "nsubj"; f.enhanced=yes}
+  }
+
+  rule propaga_nsubj_de_ccomp_advcl_infinitivo_participio{
+    pattern{
+      HEAD -[1=ccomp|advcl]-> DEP;
+      HEAD -[1=nsubj]-> NSUBJ;
+      HEAD [!Person,!Number,!Gender]; % Infinitivos não flexionados e gerúndio
+      DEP [VerbForm=Part];
+      DEP.Gender = NSUBJ.Gender;
+      DEP.Number = NSUBJ.Number;
+      DEP [lemma<>haver|chover|ventar|gear|entardecer|anoitecer|nevar|trovejar|relampejar];
+    }
+    without { HEAD -[2=speech]-> DEP }
+    without { HEAD -[2=de_o_que|conforme|segundo|como]-> DEP }
+    without { HEAD -[1=aux|cop]-> *}
+    without { DEP -[1=nsubj|csubj]-> * }
     without { * -[1=ref]-> NSUBJ } % Se for caso de acl:relcl, quem deve ser propagado como nsubj é o antecendente, não o pron ref
     without { DEP -[1=expl,2=impers]-> * }
     commands{add_edge f: DEP -> NSUBJ; f.label = "nsubj"; f.enhanced=yes}
@@ -1781,7 +1818,7 @@ package elvis_novas{
     without { HEAD -[2=speech]-> DEP }
     without { HEAD -[2=de_o_que|conforme|segundo|como]-> DEP }
     without { DEP -[1=aux|cop]-> AUX }
-    without { DEP -[1=nsubj]-> * }
+    without { DEP -[1=nsubj|csubj]-> * }
     without { * -[1=ref]-> NSUBJ } % Se for caso de acl:relcl, quem deve ser propagado como nsubj é o antecendente, não o pron ref
     without { DEP -[1=expl,2=impers]-> * }
     commands{add_edge f: DEP -> NSUBJ; f.label = "nsubj"; f.enhanced=yes}
@@ -1798,7 +1835,7 @@ package elvis_novas{
     without { HEAD -[2=speech]-> DEP }
     without { HEAD -[2=de_o_que|conforme|segundo|como]-> DEP }
     without { DEP -[1=aux|cop]-> * }
-    without { DEP -[1=nsubj]-> * }
+    without { DEP -[1=nsubj|csubj]-> * }
     without { * -[1=ref]-> NSUBJ } % Se for caso de acl:relcl, quem deve ser propagado como nsubj é o antecendente, não o pron ref
     without { DEP -[1=expl,2=impers]-> * }
     commands{add_edge f: DEP -> NSUBJ; f.label = "nsubj"; f.enhanced=yes}
@@ -1815,7 +1852,25 @@ package elvis_novas{
     }
     without { HEAD -[2=speech]-> DEP }
     without { HEAD -[2=de_o_que|conforme|segundo|como]-> DEP }
-    without { DEP -[1=nsubj]-> * }
+    without { DEP -[1=nsubj|csubj]-> * }
+    without { DEP -[1=aux|cop]-> AUX }
+    without { * -[1=ref]-> NSUBJ } % Se for caso de acl:relcl, quem deve ser propagado como nsubj é o antecendente, não o pron ref
+    without { DEP -[1=expl,2=impers]-> * }
+    commands{add_edge f: DEP -> NSUBJ; f.label = "nsubj"; f.enhanced=yes}
+  }
+
+  rule propaga_nsubj_de_ccomp_advcl_participio_aux{
+    pattern{
+      HEAD -[1=ccomp|advcl]-> DEP;
+      HEAD -[1=nsubj]-> NSUBJ;
+      HEAD [Gender,Number];
+      DEP -[1=aux|cop]-> AUX;
+      HEAD.Number = AUX.Number; % Particípio só concorda em número
+      DEP [lemma<>haver|chover|ventar|gear|entardecer|anoitecer|nevar|trovejar|relampejar];
+    }
+    without { HEAD -[2=speech]-> DEP }
+    without { HEAD -[2=de_o_que|conforme|segundo|como]-> DEP }
+    without { DEP -[1=nsubj|csubj]-> * }
     without { * -[1=ref]-> NSUBJ } % Se for caso de acl:relcl, quem deve ser propagado como nsubj é o antecendente, não o pron ref
     without { DEP -[1=expl,2=impers]-> * }
     commands{add_edge f: DEP -> NSUBJ; f.label = "nsubj"; f.enhanced=yes}
@@ -1832,7 +1887,7 @@ package elvis_novas{
     }
     without { HEAD -[2=speech]-> DEP }
     without { HEAD -[2=de_o_que|conforme|segundo|como]-> DEP }
-    without { DEP -[1=nsubj]-> * }
+    without { DEP -[1=nsubj|csubj]-> * }
     without { * -[1=ref]-> NSUBJ } % Se for caso de acl:relcl, quem deve ser propagado como nsubj é o antecendente, não o pron ref
     without { DEP -[1=expl,2=impers]-> * }
     commands{add_edge f: DEP -> NSUBJ; f.label = "nsubj"; f.enhanced=yes}
@@ -1850,7 +1905,7 @@ package elvis_novas{
     }
     without { HEAD -[2=speech]-> DEP }
     without { HEAD -[2=de_o_que|conforme|segundo|como]-> DEP }
-    without { DEP -[1=nsubj]-> * }
+    without { DEP -[1=nsubj|csubj]-> * }
     without { * -[1=ref]-> NSUBJ } % Se for caso de acl:relcl, quem deve ser propagado como nsubj é o antecendente, não o pron ref
     without { DEP -[1=expl,2=impers]-> * }
     commands{add_edge f: DEP -> NSUBJ; f.label = "nsubj"; f.enhanced=yes}
@@ -1865,7 +1920,7 @@ package elvis_novas{
     }
     without { HEAD -[2=speech]-> DEP }
     without { HEAD -[2=de_o_que|conforme|segundo|como]-> DEP }
-    without { DEP -[1=nsubj]-> * }
+    without { DEP -[1=nsubj|csubj]-> * }
     without { * -[1=ref]-> NSUBJ } % Se for caso de acl:relcl, quem deve ser propagado como nsubj é o antecendente, não o pron ref
     without { DEP -[1=expl,2=impers]-> * }
     commands{add_edge f: DEP -> NSUBJ; f.label = "nsubj"; f.enhanced=yes}
@@ -1880,7 +1935,7 @@ package elvis_novas{
     }
     without { HEAD -[2=speech]-> DEP }
     without { HEAD -[2=de_o_que|conforme|segundo|como]-> DEP }
-    without { DEP -[1=nsubj]-> * }
+    without { DEP -[1=nsubj|csubj]-> * }
     without { * -[1=ref]-> NSUBJ } % Se for caso de acl:relcl, quem deve ser propagado como nsubj é o antecendente, não o pron ref
     without { DEP -[1=expl,2=impers]-> * }
     commands{add_edge f: DEP -> NSUBJ; f.label = "nsubj"; f.enhanced=yes}
@@ -1897,7 +1952,7 @@ package elvis_novas{
     }
     without { HEAD -[2=speech]-> DEP }
     without { HEAD -[2=de_o_que|conforme|segundo|como]-> DEP }
-    without { DEP -[1=nsubj]-> * }
+    without { DEP -[1=nsubj|csubj]-> * }
     without { * -[1=ref]-> NSUBJ } % Se for caso de acl:relcl, quem deve ser propagado como nsubj é o antecendente, não o pron ref
     without { DEP -[1=expl,2=impers]-> * }
     commands{add_edge f: DEP -> NSUBJ; f.label = "nsubj"; f.enhanced=yes}
@@ -1914,7 +1969,7 @@ package elvis_novas{
     }
     without { HEAD -[2=speech]-> DEP }
     without { HEAD -[2=de_o_que|conforme|segundo|como]-> DEP }
-    without { DEP -[1=nsubj]-> * }
+    without { DEP -[1=nsubj|csubj]-> * }
     without { * -[1=ref]-> NSUBJ } % Se for caso de acl:relcl, quem deve ser propagado como nsubj é o antecendente, não o pron ref
     without { DEP -[1=expl,2=impers]-> * }
     commands{add_edge f: DEP -> NSUBJ; f.label = "nsubj"; f.enhanced=yes}
@@ -1932,7 +1987,7 @@ package elvis_novas{
     }
     without { HEAD -[2=speech]-> DEP }
     without { HEAD -[2=de_o_que|conforme|segundo|como]-> DEP }
-    without { DEP -[1=nsubj]-> * }
+    without { DEP -[1=nsubj|csubj]-> * }
     without { * -[1=ref]-> NSUBJ } % Se for caso de acl:relcl, quem deve ser propagado como nsubj é o antecendente, não o pron ref
     without { DEP -[1=expl,2=impers]-> * }
     commands{add_edge f: DEP -> NSUBJ; f.label = "nsubj"; f.enhanced=yes}
@@ -1948,7 +2003,7 @@ package elvis_novas{
     }
     without { HEAD -[2=speech]-> DEP }
     without { HEAD -[2=de_o_que|conforme|segundo|como]-> DEP }
-    without { DEP -[1=nsubj]-> * }
+    without { DEP -[1=nsubj|csubj]-> * }
     without { * -[1=ref]-> NSUBJ } % Se for caso de acl:relcl, quem deve ser propagado como nsubj é o antecendente, não o pron ref
     without { DEP -[1=expl,2=impers]-> * }
     commands{add_edge f: DEP -> NSUBJ; f.label = "nsubj"; f.enhanced=yes}
@@ -1964,7 +2019,7 @@ package elvis_novas{
     }
     without { HEAD -[2=speech]-> DEP }
     without { HEAD -[2=de_o_que|conforme|segundo|como]-> DEP }
-    without { DEP -[1=nsubj]-> * }
+    without { DEP -[1=nsubj|csubj]-> * }
     without { * -[1=ref]-> NSUBJ } % Se for caso de acl:relcl, quem deve ser propagado como nsubj é o antecendente, não o pron ref
     without { DEP -[1=expl,2=impers]-> * }
     commands{add_edge f: DEP -> NSUBJ; f.label = "nsubj"; f.enhanced=yes}
@@ -1979,7 +2034,7 @@ package elvis_novas{
       HEADACL [upos<>ADJ|ADV];
       DEPACL [lemma<>haver|chover|ventar|gear|entardecer|anoitecer|nevar|trovejar|relampejar];
     }
-    without { DEPACL -[1=nsubj]-> * }
+    without { DEPACL -[1=nsubj|csubj]-> * }
     without { DEPACL -[1=cop]-> COP }
     without { TER [lemma="ter"]; DEPACL -[1=aux]-> TER }
     without { DEPACL -[1=expl,2=impers]-> * }
@@ -1993,7 +2048,7 @@ package elvis_novas{
       HEADACL -[1=nsubj]-> NSUBJ;
       DEPACL [lemma<>haver|chover|ventar|gear|entardecer|anoitecer|nevar|trovejar|relampejar];
     }
-    without { DEPACL -[1=nsubj]-> * }
+    without { DEPACL -[1=nsubj|csubj]-> * }
     without { DEPACL -[1=cop]-> COP }
     without { * -[1=ref]-> NSUBJ } % Se for caso de acl:relcl, quem deve ser propagado como nsubj é o antecendente, não o pron ref
     without { DEPACL -[1=expl,2=impers]-> * }
@@ -2007,7 +2062,7 @@ package elvis_novas{
       HEADAMOD -[1=amod]-> HEADACL;
       DEPACL [lemma<>haver|chover|ventar|gear|entardecer|anoitecer|nevar|trovejar|relampejar];
     }
-    without { DEPACL -[1=nsubj]-> * }
+    without { DEPACL -[1=nsubj|csubj]-> * }
     without { DEPACL -[1=cop]-> COP }
     without { DEPACL -[1=expl,2=impers]-> * }
     commands{add_edge f: DEPACL -> HEADAMOD; f.label = "nsubj"; f.enhanced=yes}
@@ -2023,7 +2078,7 @@ package elvis_novas{
     without { DEPACL -[1=aux|cop]-> * }
     without { HEADADVMOD.Person <> DEPACL.Person }
     without { HEADADVMOD.Number <> DEPACL.Number }
-    without { DEPACL -[1=nsubj]-> * }
+    without { DEPACL -[1=nsubj|csubj]-> * }
     without { * -[1=ref]-> NSUBJ } % Se for caso de acl:relcl, quem deve ser propagado como nsubj é o antecendente, não o pron ref
     without { DEPACL -[1=expl,2=impers]-> * }
     commands{add_edge f: DEPACL -> NSUBJ; f.label = "nsubj"; f.enhanced=yes}
@@ -2039,7 +2094,7 @@ package elvis_novas{
       HEADADVMOD.Number = AUX.Number;
       DEPACL [lemma<>haver|chover|ventar|gear|entardecer|anoitecer|nevar|trovejar|relampejar];
     }
-    without { DEPACL -[1=nsubj]-> * }
+    without { DEPACL -[1=nsubj|csubj]-> * }
     without { * -[1=ref]-> NSUBJ } % Se for caso de acl:relcl, quem deve ser propagado como nsubj é o antecendente, não o pron ref
     without { DEPACL -[1=expl,2=impers]-> * }
     commands{add_edge f: DEPACL -> NSUBJ; f.label = "nsubj"; f.enhanced=yes}
@@ -2054,7 +2109,7 @@ package elvis_novas{
       AUX [VerbForm=Inf];
       DEPACL [lemma<>haver|chover|ventar|gear|entardecer|anoitecer|nevar|trovejar|relampejar];
     }
-    without { DEPACL -[1=nsubj]-> * }
+    without { DEPACL -[1=nsubj|csubj]-> * }
     without { * -[1=ref]-> NSUBJ } % Se for caso de acl:relcl, quem deve ser propagado como nsubj é o antecendente, não o pron ref
     without { DEPACL -[1=expl,2=impers]-> * }
     commands{add_edge f: DEPACL -> NSUBJ; f.label = "nsubj"; f.enhanced=yes}
@@ -2073,7 +2128,7 @@ package elvis_novas{
       HEADHEADACLRELCL.Number = DEPACLRELCL.Number;
       DEPACLRELCL [lemma<>haver|chover|ventar|gear|entardecer|anoitecer|nevar|trovejar|relampejar];
     }
-    without{ DEPACLRELCL -[1=nsubj]-> * }
+    without{ DEPACLRELCL -[1=nsubj|csubj]-> * }
     without{ DEPACLRELCL -[1=aux|cop]-> * }
     without{ HEADHEADACLRELCL -[1=aux|cop]-> * }
     without{ DEPACLRELCL -[1=expl,2=impers]-> * }
@@ -2093,7 +2148,7 @@ package elvis_novas{
       AUX.Number = DEPACLRELCL.Number;
       DEPACLRELCL [lemma<>haver|chover|ventar|gear|entardecer|anoitecer|nevar|trovejar|relampejar];
     }
-    without{ DEPACLRELCL -[1=nsubj]-> * }
+    without{ DEPACLRELCL -[1=nsubj|csubj]-> * }
     without{ DEPACLRELCL -[1=expl,2=impers]-> * }
     without{ * -[1=ref]-> NSUBJ } % Se for caso de acl:relcl, quem deve ser propagado como nsubj é o antecendente, não o pron ref
     commands{add_edge f: DEPACLRELCL -> NSUBJ; f.label = "nsubj"; f.enhanced=yes}
@@ -2111,7 +2166,7 @@ package elvis_novas{
       HEADHEADACLRELCL.Number = AUX.Number;
       DEPACLRELCL [lemma<>haver|chover|ventar|gear|entardecer|anoitecer|nevar|trovejar|relampejar];
     }
-    without{ DEPACLRELCL -[1=nsubj]-> * }
+    without{ DEPACLRELCL -[1=nsubj|csubj]-> * }
     without{ DEPACLRELCL -[1=expl,2=impers]-> * }
     without{ * -[1=ref]-> NSUBJ } % Se for caso de acl:relcl, quem deve ser propagado como nsubj é o antecendente, não o pron ref
     commands{add_edge f: DEPACLRELCL -> NSUBJ; f.label = "nsubj"; f.enhanced=yes}
@@ -2130,7 +2185,7 @@ package elvis_novas{
       AUX1.Number = AUX2.Number;
       DEPACLRELCL [lemma<>haver|chover|ventar|gear|entardecer|anoitecer|nevar|trovejar|relampejar];
     }
-    without{ DEPACLRELCL -[1=nsubj]-> * }
+    without{ DEPACLRELCL -[1=nsubj|csubj]-> * }
     without{ DEPACLRELCL -[1=expl,2=impers]-> * }
     without{ * -[1=ref]-> NSUBJ } % Se for caso de acl:relcl, quem deve ser propagado como nsubj é o antecendente, não o pron ref
     commands{add_edge f: DEPACLRELCL -> NSUBJ; f.label = "nsubj"; f.enhanced=yes}
