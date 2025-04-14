@@ -1717,6 +1717,7 @@ package elvis_novas{
       DEP -[1=nsubj]-> HEAD1;
     }
     without{DEP -[1=nsubj]-> HEAD2}
+    without{ * -[1=ref]-> HEAD2 } % Se for caso de acl:relcl, quem deve ser propagado como nsubj é o antecendente, não o pron ref
     commands{add_edge f: DEP -> HEAD2; f.label = "nsubj"; f.enhanced=yes}
   }
 
@@ -1727,6 +1728,7 @@ package elvis_novas{
       NSUBJ2 -[1=conj]-> NSUBJ1;
     }
     without{DEPACL -[1=nsubj]-> NSUBJ2}
+    without{ * -[1=ref]-> NSUBJ2 } % Se for caso de acl:relcl, quem deve ser propagado como nsubj é o antecendente, não o pron ref
     commands{add_edge f: DEPACL -> NSUBJ2; f.label = "nsubj"; f.enhanced=yes}
   }
 
@@ -2075,6 +2077,7 @@ package elvis_novas{
     without{ DEPACLRELCL -[1=aux|cop]-> * }
     without{ HEADHEADACLRELCL -[1=aux|cop]-> * }
     without{ DEPACLRELCL -[1=expl,2=impers]-> * }
+    without{ * -[1=ref]-> NSUBJ } % Se for caso de acl:relcl, quem deve ser propagado como nsubj é o antecendente, não o pron ref
     commands{add_edge f: DEPACLRELCL -> NSUBJ; f.label = "nsubj"; f.enhanced=yes}
   }
 
@@ -2092,6 +2095,7 @@ package elvis_novas{
     }
     without{ DEPACLRELCL -[1=nsubj]-> * }
     without{ DEPACLRELCL -[1=expl,2=impers]-> * }
+    without{ * -[1=ref]-> NSUBJ } % Se for caso de acl:relcl, quem deve ser propagado como nsubj é o antecendente, não o pron ref
     commands{add_edge f: DEPACLRELCL -> NSUBJ; f.label = "nsubj"; f.enhanced=yes}
   }
 
@@ -2109,6 +2113,7 @@ package elvis_novas{
     }
     without{ DEPACLRELCL -[1=nsubj]-> * }
     without{ DEPACLRELCL -[1=expl,2=impers]-> * }
+    without{ * -[1=ref]-> NSUBJ } % Se for caso de acl:relcl, quem deve ser propagado como nsubj é o antecendente, não o pron ref
     commands{add_edge f: DEPACLRELCL -> NSUBJ; f.label = "nsubj"; f.enhanced=yes}
   }
 
@@ -2127,6 +2132,7 @@ package elvis_novas{
     }
     without{ DEPACLRELCL -[1=nsubj]-> * }
     without{ DEPACLRELCL -[1=expl,2=impers]-> * }
+    without{ * -[1=ref]-> NSUBJ } % Se for caso de acl:relcl, quem deve ser propagado como nsubj é o antecendente, não o pron ref
     commands{add_edge f: DEPACLRELCL -> NSUBJ; f.label = "nsubj"; f.enhanced=yes}
   }
 
