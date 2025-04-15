@@ -471,9 +471,37 @@ package rel_pron{
     }
 
   % ELVIS: acrescentei essa regra pro caso de "[quem] se exalta não deve desqualificar..."
-    rule pron_quem{
+    rule pron_quem_verbo{
       pattern{
-        PRO -[!enhanced]-> H; PRO [Dupos=ADV|DET|PRON,PronType=Ind|Rel,lemma=quem]; PRO -[acl:relcl]-> H
+        PRO -[!enhanced]-> H; PRO [Dupos=ADV|DET|PRON,PronType=Ind|Rel,lemma=quem]; PRO -[acl:relcl]-> H;
+        H [Person=3];
+      }
+      without{H -[1=aux|cop]-> *}
+      without{* -[E:ref]-> PRO}
+      without{H -> PRO}
+      without{* -[E:ref]-> H}
+      without{PRO[ErrorPronType=Yes]}
+      commands{add_edge f: H -> PRO; f.label="nsubj"; f.enhanced=yes}
+    }
+
+    rule pron_quem_verbinf{
+      pattern{
+        PRO -[!enhanced]-> H; PRO [Dupos=ADV|DET|PRON,PronType=Ind|Rel,lemma=quem]; PRO -[acl:relcl]-> H;
+        H [VerbForm=Inf];
+      }
+      without{H -[1=aux|cop]-> *}
+      without{* -[E:ref]-> PRO}
+      without{H -> PRO}
+      without{* -[E:ref]-> H}
+      without{PRO[ErrorPronType=Yes]}
+      commands{add_edge f: H -> PRO; f.label="nsubj"; f.enhanced=yes}
+    }
+
+    rule pron_quem_aux{
+      pattern{
+        PRO -[!enhanced]-> H; PRO [Dupos=ADV|DET|PRON,PronType=Ind|Rel,lemma=quem]; PRO -[acl:relcl]-> H;
+        H -[1=aux|cop]-> AUX;
+        AUX [Person=3];
       }
       without{* -[E:ref]-> PRO}
       without{H -> PRO}
@@ -1094,6 +1122,22 @@ package coord_dep_left_pck{
       CONJ1.Number = CONJ2.Number; % ELVIS: Adicionei para concordância
       e:CONJ1 -[1=nsubj]-> D;
       D << CONJ1
+      }
+    without{CONJ2 -> D}
+    without{CONJ2 -[1=nsubj|csubj]-> *}
+    without{* -[1=ref]-> D}
+    without{CONJ2 -[orphan]-> *} % ELVIS: Adicionei, para não propagar dependentes de conj caso esse conj seja head de orphan
+    commands{add_edge f:CONJ2 -> D; f.label = "nsubj"; f.enhanced=yes}
+    }
+
+    % ELVIS: Criei para propagar sujeito quando há PRON e NOUN: FOLHA_DOC003219_SENT073
+    rule coord_dep_left_nsubj_pron_noun{
+    pattern{
+      CONJ2 [upos=NOUN];
+      CONJ1 [PronType=Rel];
+      CONJ1 -[1=conj]-> CONJ2;
+      e:CONJ1 -[1=nsubj]-> D;
+      D >> CONJ1
       }
     without{CONJ2 -> D}
     without{CONJ2 -[1=nsubj|csubj]-> *}
