@@ -1186,6 +1186,40 @@ package coord_dep_left_pck{
     commands{add_edge f:CONJ2 -> D; f.label = "nsubj"; f.enhanced=yes}
     }
 
+    % ELVIS: Criei para propagar sujeito quando há concordância entre aux e aux
+    rule coord_dep_left_nsubj_aux5{
+    pattern{
+      CONJ1 -[1=conj]-> CONJ2;
+      CONJ1 -[1=aux|cop]-> AUX1;
+      CONJ2 -[1=aux|cop]-> AUX2;
+      AUX1.Person = AUX2.Person;
+      AUX1.Number = AUX2.Number;
+      e:CONJ1 -[1=nsubj]-> D;
+      D << CONJ1
+      }
+    without{CONJ2 -> D}
+    without{CONJ2 -[1=nsubj|csubj]-> *}
+    without{* -[1=ref]-> D}
+    without{CONJ2 -[orphan]-> *}
+    commands{add_edge f:CONJ2 -> D; f.label = "nsubj"; f.enhanced=yes}
+    }
+
+    % ELVIS: Criei para propagar sujeito quando é o mesmo aux
+    rule coord_dep_left_nsubj_aux6{
+    pattern{
+      CONJ1 -[1=conj]-> CONJ2;
+      CONJ1 -[1=aux|cop]-> AUX;
+      CONJ2 -[1=aux|cop]-> AUX;
+      e:CONJ1 -[1=nsubj]-> D;
+      D << CONJ1
+      }
+    without{CONJ2 -> D}
+    without{CONJ2 -[1=nsubj|csubj]-> *}
+    without{* -[1=ref]-> D}
+    without{CONJ2 -[orphan]-> *}
+    commands{add_edge f:CONJ2 -> D; f.label = "nsubj"; f.enhanced=yes}
+    }
+
     % ELVIS: Criei para resolver :pass nos casos acima
     rule coord_dep_left_nsubj_pass{
     pattern{
