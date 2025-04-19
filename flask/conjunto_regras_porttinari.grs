@@ -2110,7 +2110,7 @@ package elvis_novas{
       HEAD -[1=ccomp|advcl]-> DEP;
       DEP -[1=aux|cop]-> AUX;
       HEAD -[1=nsubj]-> NSUBJ;
-      AUX [VerbForm<>Fin];
+      AUX [!Person, !Number];
       DEP [lemma<>haver|chover|ventar|gear|entardecer|anoitecer|nevar|trovejar|relampejar];
     }
     without { HEAD -[2=outer]-> NSUBJ }
@@ -2127,7 +2127,7 @@ package elvis_novas{
       HEAD -[1=ccomp|advcl]-> DEP;
       HEAD -[1=aux|cop]-> AUX;
       HEAD -[1=nsubj]-> NSUBJ;
-      AUX [VerbForm<>Fin];
+      AUX [!Person, !Number];
       DEP [lemma<>haver|chover|ventar|gear|entardecer|anoitecer|nevar|trovejar|relampejar];
     }
     without { HEAD -[2=outer]-> NSUBJ }
