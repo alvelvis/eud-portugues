@@ -1754,7 +1754,7 @@ package elvis_novas{
   % ELVIS: acrescentei essa regra pro caso de "[quem] se exalta não deve desqualificar..."
   rule pron_quem_verbo{
     pattern{
-      PRO -[!enhanced]-> H; PRO [Dupos=ADV|DET|PRON,PronType=Ind|Rel,lemma=quem]; PRO -[acl:relcl]-> H;
+      PRO -[!enhanced]-> H; PRO [upos=ADV|DET|PRON,PronType=Ind|Rel,lemma=quem]; PRO -[acl:relcl]-> H;
       H [Person=3];
     }
     without{H -[1=aux|cop]-> *}
@@ -1767,7 +1767,7 @@ package elvis_novas{
 
   rule pron_quem_verbinf{
     pattern{
-      PRO -[!enhanced]-> H; PRO [Dupos=ADV|DET|PRON,PronType=Ind|Rel,lemma=quem]; PRO -[acl:relcl]-> H;
+      PRO -[!enhanced]-> H; PRO [upos=ADV|DET|PRON,PronType=Ind|Rel,lemma=quem]; PRO -[acl:relcl]-> H;
       H [VerbForm=Inf];
     }
     without{H -[1=aux|cop]-> *}
@@ -1780,7 +1780,7 @@ package elvis_novas{
 
   rule pron_quem_aux{
     pattern{
-      PRO -[!enhanced]-> H; PRO [Dupos=ADV|DET|PRON,PronType=Ind|Rel,lemma=quem]; PRO -[acl:relcl]-> H;
+      PRO -[!enhanced]-> H; PRO [upos=ADV|DET|PRON,PronType=Ind|Rel,lemma=quem]; PRO -[acl:relcl]-> H;
       H -[1=aux|cop]-> AUX;
       AUX [Person=3];
     }
