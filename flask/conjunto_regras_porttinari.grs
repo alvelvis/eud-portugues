@@ -470,46 +470,6 @@ package rel_pron{
       commands{add_edge H -[ANTREL]->PRO}
     }
 
-  % ELVIS: acrescentei essa regra pro caso de "[quem] se exalta não deve desqualificar..."
-    rule pron_quem_verbo{
-      pattern{
-        PRO -[!enhanced]-> H; PRO [Dupos=ADV|DET|PRON,PronType=Ind|Rel,lemma=quem]; PRO -[acl:relcl]-> H;
-        H [Person=3];
-      }
-      without{H -[1=aux|cop]-> *}
-      without{* -[E:ref]-> PRO}
-      without{H -> PRO}
-      without{* -[E:ref]-> H}
-      without{PRO[ErrorPronType=Yes]}
-      commands{add_edge f: H -> PRO; f.label="nsubj"; f.enhanced=yes}
-    }
-
-    rule pron_quem_verbinf{
-      pattern{
-        PRO -[!enhanced]-> H; PRO [Dupos=ADV|DET|PRON,PronType=Ind|Rel,lemma=quem]; PRO -[acl:relcl]-> H;
-        H [VerbForm=Inf];
-      }
-      without{H -[1=aux|cop]-> *}
-      without{* -[E:ref]-> PRO}
-      without{H -> PRO}
-      without{* -[E:ref]-> H}
-      without{PRO[ErrorPronType=Yes]}
-      commands{add_edge f: H -> PRO; f.label="nsubj"; f.enhanced=yes}
-    }
-
-    rule pron_quem_aux{
-      pattern{
-        PRO -[!enhanced]-> H; PRO [Dupos=ADV|DET|PRON,PronType=Ind|Rel,lemma=quem]; PRO -[acl:relcl]-> H;
-        H -[1=aux|cop]-> AUX;
-        AUX [Person=3];
-      }
-      without{* -[E:ref]-> PRO}
-      without{H -> PRO}
-      without{* -[E:ref]-> H}
-      without{PRO[ErrorPronType=Yes]}
-      commands{add_edge f: H -> PRO; f.label="nsubj"; f.enhanced=yes}
-    }
-
   % ELVIS: vizinho com o_qual há relações
   % ("o" estava como ANTREL de "qual", porque "qual" é pronome relativo,
   % mas o correto era "vizinho" ser ANTREL de "o", head do fixed)
@@ -1791,6 +1751,46 @@ package cleaning_feat{
 }
 
 package elvis_novas{
+  % ELVIS: acrescentei essa regra pro caso de "[quem] se exalta não deve desqualificar..."
+  rule pron_quem_verbo{
+    pattern{
+      PRO -[!enhanced]-> H; PRO [Dupos=ADV|DET|PRON,PronType=Ind|Rel,lemma=quem]; PRO -[acl:relcl]-> H;
+      H [Person=3];
+    }
+    without{H -[1=aux|cop]-> *}
+    without{* -[E:ref]-> PRO}
+    without{H -> PRO}
+    without{* -[E:ref]-> H}
+    without{PRO[ErrorPronType=Yes]}
+    commands{add_edge f: H -> PRO; f.label="nsubj"; f.enhanced=yes}
+  }
+
+  rule pron_quem_verbinf{
+    pattern{
+      PRO -[!enhanced]-> H; PRO [Dupos=ADV|DET|PRON,PronType=Ind|Rel,lemma=quem]; PRO -[acl:relcl]-> H;
+      H [VerbForm=Inf];
+    }
+    without{H -[1=aux|cop]-> *}
+    without{* -[E:ref]-> PRO}
+    without{H -> PRO}
+    without{* -[E:ref]-> H}
+    without{PRO[ErrorPronType=Yes]}
+    commands{add_edge f: H -> PRO; f.label="nsubj"; f.enhanced=yes}
+  }
+
+  rule pron_quem_aux{
+    pattern{
+      PRO -[!enhanced]-> H; PRO [Dupos=ADV|DET|PRON,PronType=Ind|Rel,lemma=quem]; PRO -[acl:relcl]-> H;
+      H -[1=aux|cop]-> AUX;
+      AUX [Person=3];
+    }
+    without{* -[E:ref]-> PRO}
+    without{H -> PRO}
+    without{* -[E:ref]-> H}
+    without{PRO[ErrorPronType=Yes]}
+    commands{add_edge f: H -> PRO; f.label="nsubj"; f.enhanced=yes}
+  }
+  
   % ELVIS: Quando o verb tem dois sujeitos, os dois devem ser propagados
   rule propaga_outros_sujeitos_do_mesmo_head_ccomp_advcl{
     pattern{
