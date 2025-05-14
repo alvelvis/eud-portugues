@@ -2255,6 +2255,24 @@ package elvis_novas{
     commands{add_edge f: DEPACLRELCL -> NSUBJ; f.label = "nsubj"; f.enhanced=yes}
   }
 
+  % Comentando a regra porque gera falsos positivos, então achamos melhor corrigir manualmente de acordo com as planilhas de revisões.
+  % rule propaga_sujeito_aclrelcl_infinitivo1{
+  %  pattern{
+  %    HEADACLRELCL -[1=acl, 2=relcl]-> DEPACLRELCL;
+  %    HEADHEADACLRELCL -[1=nsubj]-> NSUBJ;
+  %    HEADHEADACLRELCL -> HEADACLRELCL;
+  %    HEADHEADACLRELCL [!Person,!Number];
+  %    DEPACLRELCL [lemma<>haver|chover|ventar|gear|entardecer|anoitecer|nevar|trovejar|relampejar];
+  %  }
+  %  without{ HEADHEADACLRELCL -[2=outer]-> NSUBJ }
+  %  without{ DEPACLRELCL -[1=nsubj|csubj]-> * }
+  %  without{ DEPACLRELCL -[1=aux|cop]-> * }
+  %  without{ HEADHEADACLRELCL -[1=aux|cop]-> * }
+  %  without{ DEPACLRELCL -[1=expl,2=impers]-> * }
+  %  without{ * -[1=ref]-> NSUBJ } % Se for caso de acl:relcl, quem deve ser propagado como nsubj é o antecendente, não o pron ref
+  %  commands{add_edge f: DEPACLRELCL -> NSUBJ; f.label = "nsubj"; f.enhanced=yes}
+  % }
+
   rule propaga_sujeito_aclrelcl_aux1{
     pattern{
       HEADACLRELCL -[1=acl, 2=relcl]-> DEPACLRELCL;
@@ -2840,6 +2858,8 @@ strat eud_portuguese_extended{
         Onf(copy_basic_enhanced),
         Onf(cleaning_feat),
         Onf(elvis),
+        Onf(elvis_novas),
+        Onf(deep_subj_ud),
         Onf(elvis_novas),
         Onf(deep_subj_ud),
         Onf(elvis_limpezas),
