@@ -1750,47 +1750,7 @@ package cleaning_feat{
   }
 }
 
-package elvis_novas{
-  % ELVIS: acrescentei essa regra pro caso de "[quem] se exalta não deve desqualificar..."
-  rule pron_quem_verbo{
-    pattern{
-      PRO -[!enhanced]-> H; PRO [upos=ADV|DET|PRON,PronType=Ind|Rel,lemma=quem]; PRO -[acl:relcl]-> H;
-      H [Person=3];
-    }
-    without{H -[1=aux|cop]-> *}
-    without{* -[E:ref]-> PRO}
-    without{H -> PRO}
-    without{* -[E:ref]-> H}
-    without{PRO[ErrorPronType=Yes]}
-    commands{add_edge f: H -> PRO; f.label="nsubj"; f.enhanced=yes}
-  }
-
-  rule pron_quem_verbinf{
-    pattern{
-      PRO -[!enhanced]-> H; PRO [upos=ADV|DET|PRON,PronType=Ind|Rel,lemma=quem]; PRO -[acl:relcl]-> H;
-      H [VerbForm=Inf];
-    }
-    without{H -[1=aux|cop]-> *}
-    without{* -[E:ref]-> PRO}
-    without{H -> PRO}
-    without{* -[E:ref]-> H}
-    without{PRO[ErrorPronType=Yes]}
-    commands{add_edge f: H -> PRO; f.label="nsubj"; f.enhanced=yes}
-  }
-
-  rule pron_quem_aux{
-    pattern{
-      PRO -[!enhanced]-> H; PRO [upos=ADV|DET|PRON,PronType=Ind|Rel,lemma=quem]; PRO -[acl:relcl]-> H;
-      H -[1=aux|cop]-> AUX;
-      AUX [Person=3];
-    }
-    without{* -[E:ref]-> PRO}
-    without{H -> PRO}
-    without{* -[E:ref]-> H}
-    without{PRO[ErrorPronType=Yes]}
-    commands{add_edge f: H -> PRO; f.label="nsubj"; f.enhanced=yes}
-  }
-  
+package elvis_novas{  
   % ELVIS: Quando o verb tem dois sujeitos, os dois devem ser propagados
   rule propaga_outros_sujeitos_do_mesmo_head_ccomp_advcl{
     pattern{
@@ -2329,6 +2289,46 @@ package elvis_novas{
     without{ DEPACLRELCL -[1=expl,2=impers]-> * }
     without{ * -[1=ref]-> NSUBJ } % Se for caso de acl:relcl, quem deve ser propagado como nsubj é o antecendente, não o pron ref
     commands{add_edge f: DEPACLRELCL -> NSUBJ; f.label = "nsubj"; f.enhanced=yes}
+  }
+
+  % ELVIS: acrescentei essa regra pro caso de "[quem] se exalta não deve desqualificar..."
+  rule pron_quem_verbo{
+    pattern{
+      PRO -[!enhanced]-> H; PRO [upos=ADV|DET|PRON,PronType=Ind|Rel,lemma=quem]; PRO -[acl:relcl]-> H;
+      H [Person=3];
+    }
+    without{H -[1=aux|cop]-> *}
+    without{* -[E:ref]-> PRO}
+    without{H -> PRO}
+    without{* -[E:ref]-> H}
+    without{PRO[ErrorPronType=Yes]}
+    commands{add_edge f: H -> PRO; f.label="nsubj"; f.enhanced=yes}
+  }
+
+  rule pron_quem_verbinf{
+    pattern{
+      PRO -[!enhanced]-> H; PRO [upos=ADV|DET|PRON,PronType=Ind|Rel,lemma=quem]; PRO -[acl:relcl]-> H;
+      H [VerbForm=Inf];
+    }
+    without{H -[1=aux|cop]-> *}
+    without{* -[E:ref]-> PRO}
+    without{H -> PRO}
+    without{* -[E:ref]-> H}
+    without{PRO[ErrorPronType=Yes]}
+    commands{add_edge f: H -> PRO; f.label="nsubj"; f.enhanced=yes}
+  }
+
+  rule pron_quem_aux{
+    pattern{
+      PRO -[!enhanced]-> H; PRO [upos=ADV|DET|PRON,PronType=Ind|Rel,lemma=quem]; PRO -[acl:relcl]-> H;
+      H -[1=aux|cop]-> AUX;
+      AUX [Person=3];
+    }
+    without{* -[E:ref]-> PRO}
+    without{H -> PRO}
+    without{* -[E:ref]-> H}
+    without{PRO[ErrorPronType=Yes]}
+    commands{add_edge f: H -> PRO; f.label="nsubj"; f.enhanced=yes}
   }
 
 }
