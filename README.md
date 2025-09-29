@@ -30,18 +30,18 @@ https://grew.fr/usage/install/
 
 `cd flask`
 
-`python3 app.py {conllu_path} {rules_path} {strategy} [udpipe_model]`
+`python3 app.py {conllu_path} {rules_path} {strategy} [udpipe_model] > {out_path}`
 
 Examples:
 
 a) Annotate UD parsed sentences from `sentences.conllu` using the `eud_portuguese` strategy for Portuguese EUD:
 
-`python3 app.py sentences.conllu conjunto_regras_porttinari.grs eud_portuguese`
+`python3 app.py sentences.conllu conjunto_regras_porttinari.grs eud_portuguese > out.conllu`
 
 b) Annotate raw sentences from `sentences.txt` using Porttinari 2.15 for UD Portuguese parsing and the `eud_portuguese` strategy for Portuguese EUD:
 
-`python3 app.py sentences.txt conjunto_regras_porttinari.grs eud_portuguese portuguese-porttinari-ud-2.15-241121`
+`python3 app.py sentences.txt conjunto_regras_porttinari.grs eud_portuguese portuguese-porttinari-ud-2.15-241121 > out.conllu`
 
 c) Annotate raw sentences from `sentences.txt` using Porttinari 2.15 for UD Portuguese parsing and `eud_portuguese_extended` for Portuguese EEUD:
 
-`python3 app.py sentences.txt conjunto_regras_porttinari.grs eud_portuguese_extended portuguese-porttinari-ud-2.15-241121`
+`python3 app.py sentences.txt conjunto_regras_porttinari.grs eud_portuguese_extended portuguese-porttinari-ud-2.15-241121 > out.conllu`
