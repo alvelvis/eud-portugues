@@ -22,11 +22,11 @@ https://grew.fr/usage/install/
 
 `pip3 install -r requirements.txt`
 
-3.a) OPTIONAL: In order to run the User Interface:
+3) OPTIONAL: In order to run the User Interface:
 
 `flask run`
 
-3.b) OPTIONAL: In order to use the application in command-line:
+4) OPTIONAL: In order to use the application in command-line:
 
 `cd flask`
 
