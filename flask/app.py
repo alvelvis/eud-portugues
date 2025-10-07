@@ -106,20 +106,17 @@ def annotate(conllu, rules_path, strategy, udpipe_model):
         f.write(conllu)
     command = f"grew transform -config iwpt -grs \"{rules_path}\" -strat '{strategy}' -i '{sentence_path}' -o '{sentence_out}'"
     try:
-        enhancement = subprocess.Popen(command, shell=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE, env=os.environ)
-        enhancement.wait()
-        stdout, stderr = enhancement.communicate()
-        if enhancement.returncode != 0:
-            raise subprocess.CalledProcessError(enhancement.returncode, command, stderr)                    
+        result = subprocess.run(command, shell=True, stdout=sys.stdout, env=os.environ, check=True)
         with open(sentence_out) as f:
-            enhancement = f.read()
+            enhancement = f.read().strip() + "\n"
         os.remove(sentence_out)
     except subprocess.CalledProcessError as e:
-        enhancement = f"Error executing command: {e.stdout.decode('utf-8')}"
+        enhancement = f"Error executing command: {e.stderr.decode('utf-8')}"
     except Exception as e:
         enhancement = f"An unexpected error occurred: {str(e)}"
     finally:
-        os.remove(sentence_path)
+        if os.path.exists(sentence_path):
+            os.remove(sentence_path)
 
     return enhancement
 
